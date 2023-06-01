@@ -4,6 +4,7 @@ import base64
 import urllib
 import os
 import json
+from dotenv import load_dotenv
 
 # Your Spotify Developer Dashboard details
 load_dotenv()
