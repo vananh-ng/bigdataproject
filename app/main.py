@@ -28,8 +28,6 @@ def get_token():
     token = json_result["access_token"]
     return token
 
-
-
 def get_auth_header():
     return {
         "Authorization": "Bearer " + token
@@ -60,15 +58,34 @@ def get_artist_top_tracks(artist_id):
     json_result = json.loads(result.content)["tracks"]
     return json_result
 
-token = get_token()
-#print(token)
-result = search_for_artist("The Beatles")
-print(result["name"])
-artist_id = result["id"]
-top_tracks = get_artist_top_tracks(artist_id)
-for track in top_tracks:
-    print(track["name"])
-    print(track["preview_url"])
-    print(track["album"]["images"][0]["url"])
-    print()
+def get_artist_top_tracks(artist_id):
+    url = "https://api.spotify.com/v1/artists/" + artist_id + "/top-tracks"
+    headers = get_auth_header()
+    data = {
+        "country": "US"
+    }
+    result = requests.get(url, headers=headers, params=data)
+    json_result = json.loads(result.content)["tracks"]
+    return json_result
 
+def get_user_data():
+    url = "https://api.spotify.com/v1/me"
+    headers = get_auth_header()
+    result = requests.get(url, headers=headers)
+    json_result = json.loads(result.content)
+    return json_result
+
+token = get_token()
+print(token)
+
+#result = search_for_artist("The Beatles")
+#print(result["name"])
+#artist_id = result["id"]
+#top_tracks = get_artist_top_tracks(artist_id)
+#for track in top_tracks:
+#    print(track["name"])
+#    print(track["preview_url"])
+#    print(track["album"]["images"][0]["url"])
+#    print()
+
+user_result = get_user_data()
