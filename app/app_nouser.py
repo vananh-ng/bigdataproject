@@ -64,10 +64,29 @@ def get_songs_by_artist(token, artist_id):
     json_result = json.loads(result.content)["tracks"]
     return json_result
 
+# Get new releases
+def get_new_releases(country):
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country}&limit=1"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content) #["tracks"]
+    return json_result
+
+
 token = get_token()
 result = search_for_artist(token, "ACDC" )
 artist_id = result["id"] # With this ID I can search for songs of the artist
 songs = get_songs_by_artist(token, artist_id)
+#print(songs)
+'''for idx, song in enumerate(songs):
+    print(f"{idx +1}. {song['name']}")'''
 
-for idx, song in enumerate(songs):
-    print(f"{idx +1}. {song['name']}")
+new_releases= get_new_releases("AR")
+new_releases_name= new_releases['albums']['items'][0]['name']
+new_releases_artist= new_releases['albums']['items'][0]['artists']
+artist_names = [artist['name'] for artist in new_releases_artist]
+for name in artist_names:
+    print(name)
+print(new_releases_name)
+
+
