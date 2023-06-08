@@ -5,17 +5,19 @@ import base64
 import urllib
 import os
 import json
+import pandas as pd
 from dotenv import load_dotenv
 
 # Spotify Developer Dashboard details
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
+print(type(client_secret))
 
 # We first request a token to the Spotify Accounts Service, which will be used later on to access the Spotify Web API
 # To get our access token, we need to pass our client ID, client Secret and grant_type
 def get_token():
-    auth_string = client_id + ":" + client_secret
+    auth_string = client_id + ':' + client_secret
     auth_bytes = auth_string.encode("utf-8")
     # Spotify requests to encode the client ID and client secret using base64
     auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
@@ -69,7 +71,7 @@ def get_new_releases(country):
     url= f"https://api.spotify.com/v1/browse/new-releases?country={country}&limit=1"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
-    json_result = json.loads(result.content) #["tracks"]
+    json_result = json.loads(result.content)['albums']['items'][0]['name']
     return json_result
 
 
@@ -82,11 +84,24 @@ songs = get_songs_by_artist(token, artist_id)
     print(f"{idx +1}. {song['name']}")'''
 
 new_releases= get_new_releases("AR")
-new_releases_name= new_releases['albums']['items'][0]['name']
-new_releases_artist= new_releases['albums']['items'][0]['artists']
-artist_names = [artist['name'] for artist in new_releases_artist]
-for name in artist_names:
-    print(name)
-print(new_releases_name)
+#new_releases_name= new_releases['albums']['items'][0]['name']
+#new_releases_artist= new_releases['albums']['items'][0]['artists']
+#artist_names = [artist['name'] for artist in new_releases_artist]
+#for name in artist_names:
+ #   print(name)
 
 
+#code = st.write()
+# generate a df. Assign via the function a new column with the new releases. Based on that generate the map. Will it be updated when refresh?
+# https://plotly.com/python/scatter-plots-on-maps/
+
+
+data= {'code':['AR','US'],
+       'country':['Argentina','United States'],
+       'capital':['Buenos Aires', 'Washington'],
+       'lat':[-34.603722, 38.889805],
+       'long': [-58.381592, -77.009056]}
+df= pd.DataFrame(data)
+
+df['new_releases']= [get_new_releases(df.loc[index,'code']) for index in range(len(df))]
+print(df)
