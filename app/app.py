@@ -1,99 +1,80 @@
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 import streamlit as st
-import requests
-import base64
-import urllib
-import os
-import json
 from dotenv import load_dotenv
+import os
+from sklearn.neighbors import NearestNeighbors
+import plotly.express as px
+import streamlit.components.v1 as components
+import pandas as pd
 
-# Your Spotify Developer Dashboard details
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
-redirect_uri = "http://localhost:8501/callback"
 
-# Define the scope of access
-scope = "user-read-private user-read-email"
-auth_url = "https://accounts.spotify.com/authorize"
+client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-# Construct the authorization URL
-params = {
-    "client_id": client_id,
-    "response_type": "code",
-    "redirect_uri": redirect_uri,
-    "scope": scope,
-}
-url = f"{auth_url}?{urllib.parse.urlencode(params)}"
+st.set_page_config(page_title="Song Recommendation", page_icon=":musical_note:", layout="wide")
 
-st.write(f"Please [click here]({url}) to log in to Spotify")
+@st.cache(allow_output_mutation=True)
+def load_data():
+    df =  pd.read_csv("app/data/SpotGentrack/Data_Sources/filtered_track_df.csv")
+    df['genres'] = df['genres'].apply(lambda x: x.replace("'", "").replace("[", "").replace("]", "").split(", "))
+    exploded_track_df = df.explode('genres')
+    return exploded_track_df
 
-code = st.text_input("Please enter the code from the URL here:")
+genre_names = ['Dance Pop', 'Electronic', 'Electropop', 'Pop', 'Pop Dance', 'Pop Rap', 'Rap', 'Tropical House']
+audio_feats = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "tempo", "valence"]
 
-if code:
-    # Construct the URL for token request
-    token_url = "https://accounts.spotify.com/api/token"
+exploded_track_df = load_data()
 
-    # Construct the headers and body for the token request
-    auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode('utf-8')).decode('utf-8')
-    headers = {
-        "Authorization": f"Basic {auth_header}"
-    }
-    body = {
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": redirect_uri
-    }
+# knn model
+def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
+    genre = genre.lower()
+    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre) & (exploded_track_df["release_year"]>=start_year) & (exploded_track_df["release_year"]<=end_year)]
+    genre_data = genre_data.sort_values(by='popularity', ascending=False)[:500]
+    neigh = NearestNeighbors()
+    neigh.fit(genre_data[audio_feats].to_numpy())
+    n_neighbors = neigh.kneighbors([test_feat],       n_neighbors=len(genre_data), return_distance=False)[0]
+    uris = genre_data.iloc[n_neighbors]["uri"].tolist()
+    audios = genre_data.iloc[n_neighbors][audio_feats].to_numpy()
+    return uris, audios
 
-    # Make the token request
-    response = requests.post(token_url, headers=headers, data=body)
-    token_data = response.json()
+# app configuration
+title = "Song Recommendation Engine"
+st.title(title)
+st.write("First of all, welcome! This is the place where you can customize what you want to listen to based on genre and several key audio features. Try playing around with different settings and listen to the songs recommended by our system!")
+st.markdown("##")
+with st.container():
+    col1, col2,col3,col4 = st.columns((2,0.5,0.5,0.5))
+    with col3:
+        st.markdown("***Choose your genre:***")
+        genre = st.radio(
+            "",
+            genre_names, index=genre_names.index("Pop"))
+    with col1:
+        st.markdown("***Choose features to customize:***")
+        start_year, end_year = st.slider(
+            'Select the year range',
+            1990, 2019, (2015, 2019)
+        )
+        acousticness = st.slider(
+            'Acousticness',
+            0.0, 1.0, 0.5)
+        danceability = st.slider(
+            'Danceability',
+            0.0, 1.0, 0.5)
+        energy = st.slider(
+            'Energy',
+            0.0, 1.0, 0.5)
+        instrumentalness = st.slider(
+            'Instrumentalness',
+            0.0, 1.0, 0.0)
+        valence = st.slider(
+            'Valence',
+            0.0, 1.0, 0.45)
+        tempo = st.slider(
+            'Tempo',
+            0.0, 244.0, 118.0)
 
-    # Extract the tokens from the response
-    access_token = token_data['access_token']
-    refresh_token = token_data['refresh_token']
-
-    # You can now use the access_token for making Spotify API requests
-    st.write(f"Access Token: {access_token}")
-    st.write(f"Refresh Token: {refresh_token}")
-
-    # Get user data
-    user_data = get_user_data(access_token)
-    st.write(user_data)
-
-
-def get_auth_header(token):
-    return {
-        "Authorization": "Bearer " + token
-    }
-
-def get_user_data(token):
-    url = "https://api.spotify.com/v1/me"
-    headers = get_auth_header(token)
-    result = requests.get(url, headers=headers)
-    json_result = json.loads(result.content)
-    return json_result
-
-def search_for_artist(artist_name, token):
-    url = "https://api.spotify.com/v1/search"
-    headers = get_auth_header(token)
-    data = {
-        "q": artist_name,
-        "type": "artist",
-        "limit": "1"
-    }
-    result = requests.get(url, headers=headers, params=data)
-    json_result = json.loads(result.content)["artists"]["items"]
-    if len(json_result) == 0:
-        print("No results found")
-        return None
-    return json_result[0]
-
-def get_artist_top_tracks(artist_id, token):
-    url = "https://api.spotify.com/v1/artists/" + artist_id + "/top-tracks"
-    headers = get_auth_header(token)
-    data = {
-        "country": "US"
-    }
-    result = requests.get(url, headers=headers, params=data)
-    json_result = json.loads(result.content)["tracks"]
-    return json_result
