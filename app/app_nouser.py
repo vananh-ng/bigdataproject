@@ -7,6 +7,7 @@ import os
 import json
 import pandas as pd
 from dotenv import load_dotenv
+import plotly.express as px
 
 # Spotify Developer Dashboard details
 load_dotenv()
@@ -57,6 +58,7 @@ def search_for_artist(token, artist_name):
         return None
     
     return json_result[0]
+    
 
 # Get the songs from the artist
 def get_songs_by_artist(token, artist_id):
@@ -76,12 +78,12 @@ def get_new_releases(country):
 
 
 token = get_token()
-result = search_for_artist(token, "ACDC" )
-artist_id = result["id"] # With this ID I can search for songs of the artist
-songs = get_songs_by_artist(token, artist_id)
+#result = search_for_artist(token, "ACDC" )
+#artist_id = result["id"] # With this ID I can search for songs of the artist
+#songs = get_songs_by_artist(token, artist_id)
 #print(songs)
-'''for idx, song in enumerate(songs):
-    print(f"{idx +1}. {song['name']}")'''
+#for idx, song in enumerate(songs):
+#    print(f"{idx +1}. {song['name']}")
 
 new_releases= get_new_releases("AR")
 #new_releases_name= new_releases['albums']['items'][0]['name']
@@ -95,13 +97,15 @@ new_releases= get_new_releases("AR")
 # generate a df. Assign via the function a new column with the new releases. Based on that generate the map. Will it be updated when refresh?
 # https://plotly.com/python/scatter-plots-on-maps/
 
+# Read country data
+df_countries= pd.read_excel(r'C:\Users\sofia\OneDrive\Documentos\GitHub\bigdataproject\app\data\country-available-final.xlsx')
+df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
 
-data= {'code':['AR','US'],
-       'country':['Argentina','United States'],
-       'capital':['Buenos Aires', 'Washington'],
-       'lat':[-34.603722, 38.889805],
-       'long': [-58.381592, -77.009056]}
-df= pd.DataFrame(data)
+# Get new releases per country
+df_countries['new_releases']= [get_new_releases(df_countries.loc[index,'country_code']) for index in range(len(df_countries))]
 
-df['new_releases']= [get_new_releases(df.loc[index,'code']) for index in range(len(df))]
-print(df)
+# Plot the map
+fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
+                     hover_name='new_releases', color='country'
+                     ) #text= 'country'
+st.plotly_chart(fig, use_container_width=False)
