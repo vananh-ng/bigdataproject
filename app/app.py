@@ -17,9 +17,10 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 st.set_page_config(page_title="Song Recommendation", page_icon=":musical_note:", layout="wide")
 
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
+@st.cache_data()
 def load_data():
-    df =  pd.read_csv("app/data/SpotGentrack/Data_Sources/filtered_track_df.csv")
+    df =  pd.read_csv("../app/data/SpotGentrack/Data_Sources/filtered_track_df.csv")
     df['genres'] = df['genres'].apply(lambda x: x.replace("'", "").replace("[", "").replace("]", "").split(", "))
     exploded_track_df = df.explode('genres')
     return exploded_track_df
