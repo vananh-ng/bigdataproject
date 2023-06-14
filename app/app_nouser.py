@@ -113,11 +113,11 @@ fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
 fig.update_layout(
     title= 'New releases worldwide',
     geo=dict(
-        bgcolor='#ff4b4b',  # Set the background color to black
+        bgcolor='#262730',  # Set the background color to black
         showland=True,
         landcolor='white',  # Set the color of land areas to white
         showocean=True,
-        oceancolor='#ff4b4b',  # Set the color of ocean areas to black
+        oceancolor='#262730',  # Set the color of ocean areas to black
         showlakes=True,
         lakecolor='white'  # Set the color of lakes to white
     ),
