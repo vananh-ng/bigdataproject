@@ -4,3 +4,7 @@ venv
 .ipynb_checkpoints
 .vscode
 .DS_Store
+app/data/albums_data.csv
+app/data/artist_data.csv
+app/data/audio_features.csv
+app/data/track_data.csv
