@@ -1,62 +1,64 @@
 # use logging for debugging, error logging, etc.
+# could pass the use_container_width=True to st.plotly_chart to make it get the size of the column containing the plot.
 
-import pandas as pd
-import pickle
 import streamlit as st
+import pandas as pd
+import plotly.express as px
+import pickle
 import matplotlib.pyplot as plt
-import seaborn as sns
+#from wordcloud import WordCloud
 
-df = pd.read_pickle('../app/data/album_and_artists.pkl')
 
-# Create a function to make the genre graph
-def top_genres(df):
-    genres = df['genres'].value_counts().head(10)
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=genres.values, y=genres.index, palette='viridis')
-    plt.title('Top Genres')
-    plt.xlabel('Count')
-    plt.ylabel('Genre')
-    st.pyplot(plt.clf())
+df = pd.read_pickle('data/album_and_artists.pkl')
 
-# Create a function to make the popular artists graph
-def popular_artists(df):
-    popular_artists = df.sort_values('followers', ascending=False)['artists_name'].head(10)
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=popular_artists.values, y=popular_artists.index, palette='viridis')
-    plt.title('Popular Artists')
-    plt.xlabel('Followers')
-    plt.ylabel('Artist')
-    st.pyplot(plt.clf())
 
-# Create a function to make the artist popularity over time graph
-def popularity_over_time(df, artist_name):
-    artist_df = df[df['artists_name'] == artist_name]
-    plt.figure(figsize=(10,6))
-    sns.lineplot(x=artist_df['release_year'], y=artist_df['artist_popularity'], palette='viridis')
-    plt.title(f'{artist_name} Popularity Over Time')
-    plt.xlabel('Year')
-    plt.ylabel('Popularity')
-    st.pyplot(plt.clf())
+def main():
+    st.title('Spotify Dashboard')
 
-# Create a function to make the album types graph
-def album_types(df):
-    album_types = df['album_type'].value_counts()
-    plt.figure(figsize=(10,6))
-    plt.pie(album_types.values, labels=album_types.index, autopct='%1.1f%%', startangle=140)
-    plt.title('Album Types')
-    st.pyplot(plt.clf())
+    st.header("Popular Artists")
+    top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
+    fig2 = px.bar(top_artists, x=top_artists.index, y=top_artists.values, labels={'x':'Artist', 'y':'Followers'}, title="Popular Artists")
+    st.plotly_chart(fig2)
 
-# Layout of Streamlit app
-st.title('Spotify Dashboard')
-if st.checkbox('Show Top Genres'):
-    top_genres(df)
+    st.header('Genres Popularity')
+    # Explode 'genres' list into separate rows
+    genres_popularity_df = df.explode('genres')
+    # Count the number of albums for each genre and select top 10
+    genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
+    fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, title='Top 10 Genres by Album Count')
+    st.plotly_chart(fig)
 
-if st.checkbox('Show Popular Artists'):
-    popular_artists(df)
+    st.header('Artists per Genre')
+    # Count the number of unique artists for each genre and select top 10
+    artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
+    fig = px.bar(artists_per_genre, x=artists_per_genre.index, y='artists_name', title='Top 10 Genres by Artist Count')
+    st.plotly_chart(fig)
 
-artist_name = st.text_input('Enter an artist name to see their popularity over time:')
-if artist_name:
-    popularity_over_time(df, artist_name)
+    st.header('Top Albums by Followers')
+    top_albums = df.groupby('name')['followers'].sum().nlargest(10)
+    fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, title='Top Albums by Followers')
+    st.plotly_chart(fig)
 
-if st.checkbox('Show Album Types'):
-    album_types(df)
+    st.header('Distribution of Album Types')
+    fig = px.histogram(df, x='album_type', title='Distribution of Album Types')
+    st.plotly_chart(fig)
+
+    st.header('Correlation Matrix')
+    corr_matrix = df[['total_tracks', 'followers', 'release_year']].corr()
+    fig = px.imshow(corr_matrix, title='Correlation Matrix')
+    st.plotly_chart(fig)
+
+    #st.header('Artists Word Cloud')
+    #all_artists = ' '.join(df['artists_name'].values)
+    #wordcloud = WordCloud(width = 800, height = 800, 
+    #                      background_color ='white', 
+    #                      stopwords = None, 
+    #                      min_font_size = 10).generate(all_artists) 
+    #plt.figure(figsize = (8, 8), facecolor = None) 
+    #plt.imshow(wordcloud) 
+    #plt.axis("off") 
+    #plt.tight_layout(pad = 0) 
+    #st.pyplot(plt.gcf())
+#
+if __name__ == "__main__":
+    main()

@@ -33,12 +33,14 @@ df_album['release_date'] = df_album['release_date'].astype(int)
 
 # drop unusable columns
 df_album = df_album.drop(['Unnamed: 0', 'available_markets', 'type', 'uri', 'external_urls', 'href', 'images', 'track_name_prev', 'track_id', 'release_date_precision'], axis=1)
-df_artist = df_artist.drop(['Unnamed: 0', 'type', 'track_name_prev', 'track_id'], axis=1)
+df_artist = df_artist.drop(['Unnamed: 0', 'type', 'artist_popularity', 'track_name_prev', 'track_id'], axis=1)
 
 # merge the two dataframes
 df_merge = pd.merge(df_album, df_artist, left_on='artist_id', right_on='artists_id', how='inner')
 df_merge = df_merge.drop(['artists_id'], axis=1)
 df_merge = df_merge.rename(columns={'id': 'album_id', 'release_date': 'release_year'})
+
+df_merge = df_merge.drop_duplicates()
 
 # save the merged dataframe
 with open('app/data/album_and_artists.pkl', 'wb') as file:

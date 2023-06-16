@@ -1,0 +1,9 @@
+INFO:data_processing:DataFrame head:
+  album_type               artist_id  ...                                   genres artists_name
+0      album  4obzFoKoKRHIphyHzJ35G3  ...  ['latin viral pop', 'pop', 'reggaeton']      Becky G
+1      album  4obzFoKoKRHIphyHzJ35G3  ...  ['latin viral pop', 'pop', 'reggaeton']      Becky G
+2      album  4obzFoKoKRHIphyHzJ35G3  ...  ['latin viral pop', 'pop', 'reggaeton']      Becky G
+3      album  4obzFoKoKRHIphyHzJ35G3  ...  ['latin viral pop', 'pop', 'reggaeton']      Becky G
+4      album  4obzFoKoKRHIphyHzJ35G3  ...  ['latin viral pop', 'pop', 'reggaeton']      Becky G
+
+[5 rows x 10 columns]
