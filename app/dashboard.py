@@ -1,10 +1,12 @@
+# use logging for debugging, error logging, etc.
+
 import pandas as pd
 import pickle
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df = pd.read_pickle('app/data/album_and_artists.pkl')
+df = pd.read_pickle('../app/data/album_and_artists.pkl')
 
 # Create a function to make the genre graph
 def top_genres(df):
