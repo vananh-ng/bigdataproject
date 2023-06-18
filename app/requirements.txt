@@ -4,5 +4,4 @@ python-dotenv
 pandas
 openai
 spotipy
-os
 dotenv
