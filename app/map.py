@@ -40,78 +40,54 @@ def get_token():
 def get_auth_header(token):
     return{"Authorization": "Bearer " + token}
 
-# Search for an artist and grab the ID (necessary for the request)
-def search_for_artist(token, artist_name):
-    url = "https://api.spotify.com/v1/search"
-    headers = get_auth_header(token)
-    #query= {what I want to get}&type= artist, track, playlist, album, artist, playlist, track, show, episode, audiobook.&limit=1 (first artist that pops up, most popular artist)
-    # market="ES" for Spain e.g.
-    query= f"?q={artist_name}&type=artist&limit=1"
-    # Combine query+url
-    query_url = url + query
-    result = get(query_url, headers= headers)
-    # Convert the result (json) into a python dictionary
-    json_result = json.loads(result.content)["artists"]["items"]
-    
-    if len(json_result) == 0:
-        print("No artist with this name exists...")
-        return None
-    
-    return json_result[0]
-    
-
-# Get the songs from the artist
-def get_songs_by_artist(token, artist_id):
-    url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)["tracks"]
-    return json_result
+#query= {what I want to get}&type= artist, track, playlist, album, artist, playlist, track, show, episode, audiobook.&limit=1 (first artist that pops up, most popular artist)
 
 # Get new releases
 def get_new_releases(country):
-    url= f"https://api.spotify.com/v1/browse/new-releases?country={country}&limit=1"
+    # Find the country code for the given country name
+    row = df_countries[df_countries['country'] == country]
+    country_code = row.iloc[0]['country_code']
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)['albums']['items'][0]['name']
     return json_result
-
-
 token = get_token()
-#result = search_for_artist(token, "ACDC" )
-#artist_id = result["id"] # With this ID I can search for songs of the artist
-#songs = get_songs_by_artist(token, artist_id)
-#print(songs)
-#for idx, song in enumerate(songs):
-#    print(f"{idx +1}. {song['name']}")
 
-new_releases= get_new_releases("AR")
-#new_releases_name= new_releases['albums']['items'][0]['name']
-#new_releases_artist= new_releases['albums']['items'][0]['artists']
-#artist_names = [artist['name'] for artist in new_releases_artist]
-#for name in artist_names:
- #   print(name)
+# Get artist new releases
+def get_artist_new_releases(country):
+    # Find the country code for the given country name
+    row = df_countries[df_countries['country'] == country]
+    country_code = row.iloc[0]['country_code']
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)['albums']['items'][0]['artists'][0]['name']
+    return json_result
 
-
-#code = st.write()
-# generate a df. Assign via the function a new column with the new releases. Based on that generate the map. Will it be updated when refresh?
-# https://plotly.com/python/scatter-plots-on-maps/
 
 # Read country data
 df_countries= pd.read_excel(r'C:\Users\sofia\OneDrive\Documentos\GitHub\bigdataproject\app\data\country-available-final.xlsx')
 df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
 
 # Get new releases per country
-df_countries['new_releases']= [get_new_releases(df_countries.loc[index,'country_code']) for index in range(len(df_countries))]
+df_countries['new_releases']= [get_new_releases(df_countries.loc[index,'country']) for index in range(len(df_countries))]
+
+# Get new release artist
+df_countries['artist']= [get_artist_new_releases(df_countries.loc[index,'country']) for index in range(len(df_countries))]
 
 # Plot the map
 fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
-                     hover_name='new_releases', color='country'
-                     ) #text= 'country'
+                     hover_name='new_releases', color='country',
+                     hover_data={'cap_lat': False, # Don't show latitude and longitud
+                                 'cap_lon': False,
+                                 'artist': True,   # Show artist and country
+                                 'country': True}
+                     )
 
 # Update the layout with the desired colors
 fig.update_layout(
-    title= 'New releases worldwide',
+    title= 'Hover over the mapto see the new albumns worldwide',
     geo=dict(
         bgcolor='#262730',  # Set the background color to black
         showland=True,
@@ -126,4 +102,42 @@ fig.update_layout(
     )
 )
 
+st.title('New releases')
 st.plotly_chart(fig, use_container_width=True)
+
+# Display the tracks of the album
+
+# Get the new release ID, so that later we can search for the tracks
+def get_new_releases_id(country):
+    # Find the country code for the given country name
+    row = df_countries[df_countries['country'] == country]
+    country_code = row.iloc[0]['country_code']
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)['albums']['items'][0]['id']
+    return json_result
+
+# With the ID, get the tracks of that album
+def tracks_from_album(country):
+    album_id= get_new_releases_id(country)
+    url= f"https://api.spotify.com/v1/albums/{album_id}/tracks?limit=15"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)
+    tracks_data= []
+    for item in json_result['items']:
+        name=item['name']
+        number= item['track_number']
+        tracks_data.append({'Track Number': number, 'Track': name})
+    tracks_df= pd.DataFrame(tracks_data)
+    return tracks_df
+
+country= st.selectbox(
+    'Select a country to see the latest album and its tracks', (df_countries['country']))
+selected_tracks= tracks_from_album(country)
+selected_album= get_new_releases(country)
+selected_artist= get_artist_new_releases(country)
+st.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
+st.write('Are you curious about its tracks? Check them out!🎧')
+st.dataframe(selected_tracks, hide_index=True)
