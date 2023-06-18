@@ -1,6 +1,6 @@
-streamlit
-requests
 python-dotenv
 pandas
 openai
 spotipy
+numpy
+scikit-learn
