@@ -5,6 +5,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import pickle
+import ast
+
 
 st.set_page_config(
     page_title="Real-Time Data Science Dashboard",
@@ -27,6 +29,10 @@ def main():
         fig2 = px.bar(top_artists, x=top_artists.index, y=top_artists.values, labels={'x':'Artists', 'y':'Followers'}, title="Popular Artists")
         st.plotly_chart(fig2)
 
+
+    # Convert 'genres' from string representation of list to actual list
+    df['genres'] = df['genres'].apply(ast.literal_eval) 
+
     with col2:
         st.header('Genres Popularity')
         # Explode 'genres' list into separate rows
@@ -34,14 +40,14 @@ def main():
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
         fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'Genres', 'y':'Album Count'}, title='Top 10 Genres by Album Count')
-        st.plotly_chart(fig)
-    
+        st.plotly_chart(fig)    
+
     with col3:
         st.header('Artists per Genre')
         # Count the number of unique artists for each genre and select top 10
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
         fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'Genres', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count')
-        st.plotly_chart(fig)
+        st.plotly_chart(fig)    
 
 
     # Create three more columns for the next section
