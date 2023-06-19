@@ -7,13 +7,13 @@ from sklearn.neighbors import NearestNeighbors
 import plotly.express as px
 import streamlit.components.v1 as components
 import pandas as pd
+import plotly.express as px
 
 # COLOURS
 spotifyGreen = '#1dda63'
 bg_color_cas = "#9bf0e1"
 grey = "#979797"
 lightgrey = "#bdbdbd"
-
 
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
@@ -27,7 +27,7 @@ st.set_page_config(page_title="MelodyMap", page_icon=":musical_note:", layout="w
 #@st.cache(allow_output_mutation=True)
 @st.cache_data()
 def load_data():
-    df =  pd.read_csv("../app/data/SpotGentrack/Data_Sources/filtered_track_df.csv")
+    df =  pd.read_csv("app/data/SpotGenTrack/Data_Sources/filtered_track_df.csv")
     df['genres'] = df['genres'].apply(lambda x: x.replace("'", "").replace("[", "").replace("]", "").split(", "))
     exploded_track_df = df.explode('genres')
     return exploded_track_df
@@ -38,9 +38,9 @@ audio_feats = ["acousticness", "danceability", "energy", "instrumentalness", "li
 exploded_track_df = load_data()
 
 # knn model
-def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
+def n_neighbors_uri_audio(genre, test_feat):
     genre = genre.lower()
-    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre) & (exploded_track_df["release_year"]>=start_year) & (exploded_track_df["release_year"]<=end_year)]
+    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre)]
     genre_data = genre_data.sort_values(by='popularity', ascending=False)[:500]
     neigh = NearestNeighbors()
     neigh.fit(genre_data[audio_feats].to_numpy())
@@ -49,24 +49,64 @@ def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
     audios = genre_data.iloc[n_neighbors][audio_feats].to_numpy()
     return uris, audios
 
-# app configuration
-title = "Song Recommendation Engine"
+
+### Search for a song ###
+def search_song(song_name):
+    """
+    Function to search for a song on Spotify
+    """
+    results = sp.search(q=song_name, limit=1) # limit set to 1 to return only top result
+    if results['tracks']['items'] == []:
+        return "Song not found."
+    
+    track = results['tracks']['items'][0]
+    
+    song_info = {
+        'name': track['name'],
+        'artist': track['artists'][0]['name'],
+        'album': track['album']['name'],
+        'release_date': track['album']['release_date'],
+        'popularity': track['popularity'],
+        'uri': track['uri'].split(':')[2],
+        'audio_features': sp.audio_features(track['uri'])[0]
+    }
+    
+    return song_info
+
+# Use the sidebar method for the input and button
+song_name = st.sidebar.text_input("Enter a Song Name:", value='Viva La Vida')
+
+song_info = search_song(song_name)
+
+if song_info == "Song not found.":
+    st.sidebar.write(song_info)
+else:
+    st.sidebar.write("Song Name:", song_info['name'])
+    st.sidebar.write("Artist:", song_info['artist'])
+    st.sidebar.write("Album:", song_info['album'])
+    st.sidebar.write("Release Date:", song_info['release_date'])
+    st.sidebar.write("Popularity (0-100):", song_info['popularity'])
+
+    # Create the Spotify embed in the sidebar
+    st.sidebar.markdown(
+        f'<iframe src="https://open.spotify.com/embed/track/{song_info["uri"]}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>',
+        unsafe_allow_html=True,
+    )
+
+# Song Recommendation
+title = "Be your own DJ with MelodyMap!"
 st.title(title)
-st.write("First of all, welcome! This is the place where you can customize what you want to listen to based on genre and several key audio features. Try playing around with different settings and listen to the songs recommended by our system!")
+st.write("Create your own playlist by choosing your favourite genre and features!")
 st.markdown("##")
 with st.container():
     col1, col2,col3,col4 = st.columns((2,0.5,0.5,0.5))
     with col3:
         st.markdown("***Choose your genre:***")
         genre = st.radio(
-            "",
+            "Select your genre:",
             genre_names, index=genre_names.index("Pop"))
     with col1:
         st.markdown("***Choose features to customize:***")
-        start_year, end_year = st.slider(
-            'Select the year range',
-            1990, 2023, (2015, 2023)
-        )
         acousticness = st.slider(
             'Acousticness',
             0.0, 1.0, 0.5)
@@ -94,15 +134,15 @@ with st.container():
 
 tracks_per_page = 6
 test_feat = [acousticness, danceability, energy, instrumentalness, liveness, loudness, speechiness, valence, tempo]
-uris, audios = n_neighbors_uri_audio(genre, start_year, end_year, test_feat)
+uris, audios = n_neighbors_uri_audio(genre, test_feat)
 tracks = []
 for uri in uris:
     track = """<iframe src="https://open.spotify.com/embed/track/{}" width="260" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>""".format(uri)
     tracks.append(track)
 
 if 'previous_inputs' not in st.session_state:
-    st.session_state['previous_inputs'] = [genre, start_year, end_year] + test_feat
-current_inputs = [genre, start_year, end_year] + test_feat
+    st.session_state['previous_inputs'] = [genre] + test_feat
+current_inputs = [genre] + test_feat
 if current_inputs != st.session_state['previous_inputs']:
     if 'start_track_i' in st.session_state:
         st.session_state['start_track_i'] = 0
@@ -149,57 +189,4 @@ with st.container():
     else:
         st.write("No songs left to recommend")
         
-# MOOD PLAYLIST GENERATOR
 
-def get_rec_df(rec_songs_idx):
-    top10_df = df[df.index.isin(rec_songs_idx)]
-    uri_list = top10_df.URI.values
-    album_art_list = []
-    for uri in uri_list:
-        song = sp.track(uri)
-        album_art = song['album']['images'][0]['url']
-        album_art_list.append(album_art)
-        
-    recs_df = top10_df.copy()
-    recs_df['Album Cover Art'] = album_art_list
-    
-    return recs_df
-
-def getMoodPlaylist(chosen_mood):
-    
-    if chosen_mood == "Trending songs":
-        rec_songs_idx = list(df.sort_values(by = ['Popularity'], ascending = False).index)[0:10]
-        
-    elif chosen_mood == "Dance party":
-        rec_songs_idx = list(df.sort_values(by = ['Danceability'], ascending = False).index)[0:10]
-        
-    elif chosen_mood == "Monday blues":
-        rec_songs_idx = list(df.sort_values(by = ['Valence'], ascending = True).index)[0:10]
-        
-    elif chosen_mood == "Energizing":
-        rec_songs_idx = list(df.sort_values(by = ['Energy'], ascending = False).index)[0:10]
-        
-    elif chosen_mood == "Positive vibes":
-        rec_songs_idx = list(df.sort_values(by = ['Valence'], ascending = False).index)[0:10]
-        
-    mood_df = get_rec_df(rec_songs_idx = rec_songs_idx)
-    
-    return mood_df
-
-# MOOD PLAYLIST DISPLAY IN STREAMLIT
-
-moods = ["Trending songs", "Dance party", "Monday blues", "Energizing", "Positive vibes"]
-
-st.markdown("##")
-st.markdown("***Choose your mood:***")
-chosen_mood = st.selectbox("", moods)
-
-rec_df = getMoodPlaylist(chosen_mood)
-
-# Here, we display the mood playlist
-st.markdown("### Playlist for the mood: " + chosen_mood)
-for idx, row in rec_df.iterrows():
-    st.write("Song: ", row['Song Name'])
-    st.write("Artist: ", row['Artist Name(s)'])
-    st.image(row['Album Cover Art'])
-    components.html("""<iframe src="https://open.spotify.com/embed/track/{}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>""".format(row['URI']), height=80)
