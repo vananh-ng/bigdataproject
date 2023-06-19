@@ -6,3 +6,5 @@ scikit-learn
 plotly
 streamlit
 spotipy
+pickle
+ast
