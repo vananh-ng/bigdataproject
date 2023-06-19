@@ -9,7 +9,7 @@ import pandas as pd
 from dotenv import load_dotenv
 import plotly.express as px
 
-st.set_page_config(page_title="World Map", 
+st.set_page_config(page_title="Spotify Big Data Project", 
                    #page_icon=":musical_note:", 
                    #layout="wide"
                    )
@@ -107,7 +107,7 @@ fig.update_layout(
     )
 )
 
-st.title('New releases')
+st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
 
 # Display the tracks of the album
