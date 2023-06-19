@@ -1,7 +1,8 @@
 python-dotenv
 pandas
 openai
-spotipy
 numpy
 scikit-learn
 plotly
+streamlit
+spotipy
