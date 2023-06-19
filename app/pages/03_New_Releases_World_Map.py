@@ -72,7 +72,7 @@ def get_artist_new_releases(country):
 
 
 # Read country data
-df_countries= pd.read_excel('app/data/country-available-final.xlsx')
+df_countries= pd.read_excel('../app/data/country-available-final.xlsx')
 df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
 
 # Get new releases per country

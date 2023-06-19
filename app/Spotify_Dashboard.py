@@ -14,7 +14,7 @@ st.set_page_config(
     layout="wide",
 )
 
-df = pd.read_pickle('app/data/album_and_artists.pkl')
+df = pd.read_pickle('../app/data/album_and_artists.pkl')
 
 
 def main():
