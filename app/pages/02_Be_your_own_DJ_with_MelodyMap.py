@@ -22,7 +22,7 @@ client_secret = os.getenv("CLIENT_SECRET")
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-st.set_page_config(page_title="Melody Map", 
+st.set_page_config(page_title="Spotify Big Data Project", 
                    #page_icon=":musical_note:", 
                    layout="wide")
 
