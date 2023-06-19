@@ -27,7 +27,7 @@ st.set_page_config(page_title="MelodyMap", page_icon=":musical_note:", layout="w
 #@st.cache(allow_output_mutation=True)
 @st.cache_data()
 def load_data():
-    df =  pd.read_csv(r'C:\Users\timot\Documents\Studium\Master\Semester 2\Big Data\bigdataproject\app\data\SpotGenTrack\filtered_track_df.csv')
+    df = pd.read_csv('filtered_track_df.csv')
     df['genres'] = df['genres'].apply(lambda x: x.replace("'", "").replace("[", "").replace("]", "").split(", "))
     exploded_track_df = df.explode('genres')
     return exploded_track_df
