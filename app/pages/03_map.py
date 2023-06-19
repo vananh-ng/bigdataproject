@@ -9,6 +9,11 @@ import pandas as pd
 from dotenv import load_dotenv
 import plotly.express as px
 
+st.set_page_config(page_title="World Map", 
+                   #page_icon=":musical_note:", 
+                   #layout="wide"
+                   )
+
 # Spotify Developer Dashboard details
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
@@ -67,11 +72,7 @@ def get_artist_new_releases(country):
 
 
 # Read country data
-<<<<<<< HEAD
-df_countries= pd.read_excel('country-available-final.xlsx')
-=======
-df_countries= pd.read_excel('app/data/country-available-final.xlsx')
->>>>>>> ca7334b2beb7537d11d98bca408d7ec409ffdc8f
+df_countries= pd.read_excel('../app/data/country-available-final.xlsx')
 df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
 
 # Get new releases per country

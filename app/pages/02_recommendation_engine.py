@@ -22,12 +22,14 @@ client_secret = os.getenv("CLIENT_SECRET")
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-st.set_page_config(page_title="MelodyMap", page_icon=":musical_note:", layout="wide")
+st.set_page_config(page_title="Melody Map", 
+                   #page_icon=":musical_note:", 
+                   layout="wide")
 
 #@st.cache(allow_output_mutation=True)
 @st.cache_data()
 def load_data():
-    df = pd.read_csv('filtered_track_df.csv')
+    df = pd.read_csv('../app/data/SpotGenTrack/filtered_track_df.csv')
     df['genres'] = df['genres'].apply(lambda x: x.replace("'", "").replace("[", "").replace("]", "").split(", "))
     exploded_track_df = df.explode('genres')
     return exploded_track_df

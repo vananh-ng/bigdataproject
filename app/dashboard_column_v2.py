@@ -9,7 +9,7 @@ import ast
 
 
 st.set_page_config(
-    page_title="Real-Time Data Science Dashboard",
+    page_title="Spotify Big Data Project",
     #page_icon="✅",
     layout="wide",
 )
