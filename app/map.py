@@ -67,7 +67,7 @@ def get_artist_new_releases(country):
 
 
 # Read country data
-df_countries= pd.read_excel(r'C:\Users\sofia\OneDrive\Documentos\GitHub\bigdataproject\app\data\country-available-final.xlsx')
+df_countries= pd.read_excel('app/data/country-available-final.xlsx')
 df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
 
 # Get new releases per country
@@ -87,7 +87,7 @@ fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
 
 # Update the layout with the desired colors
 fig.update_layout(
-    title= 'Hover over the mapto see the new albumns worldwide',
+    title= 'Hover over the map to see the new albumns worldwide',
     geo=dict(
         bgcolor='#262730',  # Set the background color to black
         showland=True,
