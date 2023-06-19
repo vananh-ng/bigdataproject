@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 #from wordcloud import WordCloud
 
 
-df = pd.read_pickle('data/album_and_artists.pkl')
+df = pd.read_pickle('app/data/album_and_artists.pkl')
 
 
 def main():
