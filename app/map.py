@@ -17,6 +17,7 @@ print(type(client_secret))
 
 # We first request a token to the Spotify Accounts Service, which will be used later on to access the Spotify Web API
 # To get our access token, we need to pass our client ID, client Secret and grant_type
+@st.cache_data()
 def get_token():
     auth_string = client_id + ':' + client_secret
     auth_bytes = auth_string.encode("utf-8")
