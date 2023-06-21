@@ -113,8 +113,11 @@ fig.update_layout(
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
 
-fig2 = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon')
-st.plotly_chart(fig2, use_container_width=True)
+
+test = df_countries.groupby('continent')['continent'].count()
+fig2 = px.bar(test, x='continent', y=test.values, labels={'x':'Continent', 'y':'Count of countries'}, title="Number of countries")
+st.plotly_chart(fig2)
+
 
 # Display the tracks of the album
 
