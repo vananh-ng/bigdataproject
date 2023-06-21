@@ -92,7 +92,8 @@ fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
                      )
 
 # Update the layout with the desired colors
-fig.update_layout(
+
+'''fig.update_layout(
     title= 'Hover over the map to see the new albumns worldwide',
     geo=dict(
         bgcolor='#262730',  # Set the background color to black
@@ -106,7 +107,7 @@ fig.update_layout(
     font=dict(
         color='white'  # Set the text color to white
     )
-)
+)'''
 
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
