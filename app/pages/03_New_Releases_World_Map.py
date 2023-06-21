@@ -111,7 +111,7 @@ fig.update_layout(
         color='white'  # Set the text color to white
     )
 )
-
+st.set_page_config(layout="wide")
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
 
