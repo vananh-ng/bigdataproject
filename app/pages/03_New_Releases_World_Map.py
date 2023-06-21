@@ -84,16 +84,17 @@ df_countries['artist']= [get_artist_new_releases(df_countries.loc[index,'country
 
 # Plot the map
 fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
-                     hover_name='new_releases', color='country')
-'''hover_data={'cap_lat': False, # Don't show latitude and longitud
+                     hover_name='new_releases', color='country',
+                     hover_data={'cap_lat': False, # Don't show latitude and longitud
                                  'cap_lon': False,
                                  'artist': True,   # Show artist and country
-                                 'country': True}'''
+                                 'country': True}
+)
                      
 
 # Update the layout with the desired colors
 
-'''fig.update_layout(
+fig.update_layout(
     title= 'Hover over the map to see the new albumns worldwide',
     geo=dict(
         bgcolor='#262730',  # Set the background color to black
@@ -107,10 +108,13 @@ fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
     font=dict(
         color='white'  # Set the text color to white
     )
-)'''
+)
 
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
+
+fig2 = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon')
+st.plotly_chart(fig2, use_container_width=True)
 
 # Display the tracks of the album
 
@@ -148,4 +152,3 @@ selected_artist= get_artist_new_releases(country)
 st.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
 st.write('Are you curious about its tracks? Check them out!🎧')
 st.dataframe(selected_tracks, hide_index=True)
-st.dataframe(df_countries)
