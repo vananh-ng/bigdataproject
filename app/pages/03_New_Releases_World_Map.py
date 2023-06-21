@@ -40,6 +40,8 @@ def get_token():
     json_result = json.loads(result.content) 
     token = json_result["access_token"]
     return token
+# Get token
+token = get_token()
 
 # Function to construct the header to send a request
 def get_auth_header(token):
@@ -57,7 +59,6 @@ def get_new_releases(country):
     result = get(url, headers=headers)
     json_result = json.loads(result.content)['albums']['items'][0]['name']
     return json_result
-token = get_token()
 
 # Get artist new releases
 def get_artist_new_releases(country):
@@ -146,3 +147,4 @@ selected_artist= get_artist_new_releases(country)
 st.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
 st.write('Are you curious about its tracks? Check them out!🎧')
 st.dataframe(selected_tracks, hide_index=True)
+st.dataframe(df_countries)
