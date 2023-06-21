@@ -8,3 +8,7 @@ app/data/albums_data.csv
 app/data/artist_data.csv
 app/data/audio_features.csv
 app/data/track_data.csv
+app/data/spotify_albums.csv
+app/data/spotify_artists.csv
+app/data/spotify_tracks.csv
+app/data/SpotGenTrack/Data_Sources/filtered_track_df.csv

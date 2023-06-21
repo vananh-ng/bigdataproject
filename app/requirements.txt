@@ -1,8 +1,9 @@
-streamlit
-requests
 python-dotenv
 pandas
 openai
+numpy
+scikit-learn
+plotly
+streamlit
 spotipy
-os
-dotenv
+openpyxl
