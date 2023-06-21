@@ -8,6 +8,7 @@ import json
 import pandas as pd
 from dotenv import load_dotenv
 import plotly.express as px
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Spotify Big Data Project", 
                    #page_icon=":musical_note:", 
@@ -23,7 +24,7 @@ print(type(client_secret))
 # We first request a token to the Spotify Accounts Service, which will be used later on to access the Spotify Web API
 # To get our access token, we need to pass our client ID, client Secret and grant_type
 
-@st.cache_data()
+# Get Spotify token    
 def get_token():
     auth_string = client_id + ':' + client_secret
     auth_bytes = auth_string.encode("utf-8")
@@ -42,7 +43,7 @@ def get_token():
     json_result = json.loads(result.content) 
     token = json_result["access_token"]
     return token
-# Get token
+
 token = get_token()
 
 # Function to construct the header to send a request
@@ -79,10 +80,24 @@ df_countries= pd.read_excel('app/data/country-available-final.xlsx')
 df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
 
 # Get new releases per country
-df_countries['new_releases']= [get_new_releases(df_countries.loc[index,'country']) for index in range(len(df_countries))]
+@st.cache_data()
+def pre_fetch_data():
+    # Get the new releases per country
+    df_countries['new_releases'] = [get_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
 
-# Get new release artist
-df_countries['artist']= [get_artist_new_releases(df_countries.loc[index,'country']) for index in range(len(df_countries))]
+    # Get the new release artist
+    df_countries['artist'] = [get_artist_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
+
+# Background pre-fetching function
+def background_pre_fetching():
+    with st.spinner('Pre-fetching data...'):
+        pre_fetch_data()
+    st.experimental_rerun()
+
+# Trigger background pre-fetching on app startup
+if st.session_state.get('first_run', True):
+    st.session_state['first_run'] = False
+    st.experimental_rerun()
 
 # Plot the map
 fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
@@ -115,10 +130,6 @@ st.set_page_config(layout="wide")
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
 
-
-#test = df_countries.groupby('continent')['continent'].count()
-#fig2 = px.scatter_mapbox(df_countries, lat='cap_lat', lon='cap_lon', title="Number of countries")
-#st.plotly_chart(fig2)
 
 
 # Display the tracks of the album
@@ -155,6 +166,19 @@ country= st.sidebar.selectbox(
 selected_tracks= tracks_from_album(country)
 selected_album= get_new_releases(country)
 selected_artist= get_artist_new_releases(country)
+
 st.sidebar.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
 st.sidebar.write('Are you curious about its tracks? Check them out!🎧')
 st.sidebar.dataframe(selected_tracks, hide_index=True)
+
+# Run the background pre-fetching function
+components.html(
+    """
+    <script>
+    setTimeout(function() {
+        fetch('/streamlit_background_prefetching', {method: 'POST'});
+    }, 0);
+    </script>
+    """,
+    height=0,
+)
