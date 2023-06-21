@@ -84,11 +84,11 @@ df_countries['artist']= [get_artist_new_releases(df_countries.loc[index,'country
 
 # Plot the map
 fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
-                     hover_name='new_releases', color='country',
-                     hover_data={'cap_lat': False, # Don't show latitude and longitud
+                     hover_name='new_releases', color='country'
+                     '''hover_data={'cap_lat': False, # Don't show latitude and longitud
                                  'cap_lon': False,
                                  'artist': True,   # Show artist and country
-                                 'country': True}
+                                 'country': True}'''
                      )
 
 # Update the layout with the desired colors
