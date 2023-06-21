@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.express as px
 import pickle
 import ast
-import plotly.express as px
+
 
 
 st.set_page_config(
