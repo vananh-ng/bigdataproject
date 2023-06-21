@@ -115,7 +115,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 test = df_countries.groupby('continent')['continent'].count()
-fig2 = px.scatter(df_countries, x='cap_lat', y='cap_lon', title="Number of countries")
+fig2 = px.scatter_geo(df_countries, x='cap_lat', y='cap_lon', title="Number of countries")
 st.plotly_chart(fig2)
 
 
