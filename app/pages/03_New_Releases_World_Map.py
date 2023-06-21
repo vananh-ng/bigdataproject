@@ -149,11 +149,12 @@ def tracks_from_album(country):
     tracks_df= pd.DataFrame(tracks_data)
     return tracks_df
 
-country= st.selectbox(
+# Use the sidebar method for the input and button
+country= st.sidebar.selectbox(
     'Select a country to see the latest album and its tracks', (df_countries['country']))
 selected_tracks= tracks_from_album(country)
 selected_album= get_new_releases(country)
 selected_artist= get_artist_new_releases(country)
-st.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
-st.write('Are you curious about its tracks? Check them out!🎧')
-st.dataframe(selected_tracks, hide_index=True)
+st.sidebar.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
+st.sidebar.write('Are you curious about its tracks? Check them out!🎧')
+st.sidebar.dataframe(selected_tracks, hide_index=True)
