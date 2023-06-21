@@ -83,6 +83,7 @@ df_countries['new_releases']= [get_new_releases(df_countries.loc[index,'country'
 df_countries['artist']= [get_artist_new_releases(df_countries.loc[index,'country']) for index in range(len(df_countries))]
 
 # Plot the map
+'''
 fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
                      hover_name='new_releases', color='country',
                      hover_data={'cap_lat': False, # Don't show latitude and longitud
@@ -112,10 +113,10 @@ fig.update_layout(
 
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
-
+'''
 
 test = df_countries.groupby('continent')['continent'].count()
-fig2 = px.scatter_geo(df_countries, x='cap_lat', y='cap_lon', title="Number of countries")
+fig2 = px.scatter_geo(df_countries, lat='cap_lat', lon='cap_lon', title="Number of countries")
 st.plotly_chart(fig2)
 
 
