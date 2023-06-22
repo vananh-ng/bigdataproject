@@ -53,8 +53,7 @@ def get_auth_header(token):
 #query= {what I want to get}&type= artist, track, playlist, album, artist, playlist, track, show, episode, audiobook.&limit=1 (first artist that pops up, most popular artist)
 
 # Read country data
-with open("../data/new_releases.pkl", 'rb') as file:
-    df_countries = pickle.load(file)
+df_countries = pd.read_pickle('app/data/new_releases.pkl')
 
 
 # Plot the map
