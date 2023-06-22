@@ -62,8 +62,9 @@ def main():
 
     with col5:
         st.header('Distribution of Album Types')
-        fig = px.histogram(df, x='album_type', labels={'x':'Album Type', 'y':'Count'}, title='Distribution of Album Types')
+        fig = px.pie(df, names='album_type', title='Distribution of Album Types')
         st.plotly_chart(fig, use_container_width=True)
+
 
     #with col6:
     #    st.header('Correlation Matrix')
