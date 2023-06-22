@@ -114,8 +114,7 @@ def tracks_from_album(country):
     tracks_data= []
     for item in json_result['items']:
         name=item['name']
-        number= item['track_number']
-        tracks_data.append({'Track Number': number, 'Track': name})
+        tracks_data.append({'Tracks': name})
     tracks_df= pd.DataFrame(tracks_data)
     return tracks_df
 
