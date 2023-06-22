@@ -14,3 +14,4 @@ app/data/spotify_artists.csv
 app/data/spotify_tracks.csv
 app/data/SpotGenTrack/Data_Sources/filtered_track_df.csv
 app/data/recommendations_embeddings_cache.pkl
+.env

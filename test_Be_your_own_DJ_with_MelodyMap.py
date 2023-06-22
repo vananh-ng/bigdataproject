@@ -11,10 +11,9 @@ import plotly.express as px
 import openai
 
 # API Management
-_ = load_dotenv(find_dotenv()) # read local .env file
-load_dotenv()
+load_dotenv(find_dotenv(".env"))
 
-# OpenAI API Key
+# Set the OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Spotify API Keys
