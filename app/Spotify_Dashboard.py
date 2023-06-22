@@ -73,42 +73,44 @@ def main():
     st.title('Spotify Dashboard')
 
     
-    json_result = []
-
     st.header("Popular Artists")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
-    for artist in top_artists.index:
-        json_result.append(search_for_artist(token, artist))
+
+    # Convert top_artists to dictionary and sort it
+    top_artists_dict = dict(top_artists)
+    top_artists_dict = dict(sorted(top_artists_dict.items(), key=lambda item: item[1], reverse=True))
 
     # Create two rows of columns
     row1 = st.columns(5)
     row2 = st.columns(5)
 
-    for i, result in enumerate(json_result):
+    i = 0
+    for artist_name, followers_count in top_artists_dict.items():
+        result = search_for_artist(token, artist_name)
+
         # Get the artist data from the API result
         artist_data = result['artists']['items'][0]
 
-        # Get the artist's name and follower count
-        artist_name = artist_data['name']
-        follower_count = artist_data['followers']['total']
-
         # Get the URL of the third image (small)
-        first_image_url = artist_data['images'][2]['url']
+        image_url = artist_data['images'][2]['url']
 
         # Display the artist's name, follower count, and image
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
+                formatted_count = "{:,.0f}".format(followers_count)
+                st.write(f"Followers: {formatted_count}")
+                st.image(image_url)
                 st.subheader(artist_name)
-                st.write(f"Follower count: {follower_count}")
-                st.image(first_image_url)
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
+                formatted_count = "{:,.0f}".format(followers_count)
+                st.write(f"Followers: {formatted_count}")
+                st.image(image_url)
                 st.subheader(artist_name)
-                st.write(f"Follower count: {follower_count}")
-                st.image(first_image_url)
 
+        i += 1
 
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
     #st.plotly_chart(fig2, use_container_width=True)
@@ -128,8 +130,8 @@ def main():
         genres_popularity_df = df.explode('genres')
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
-        fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'Genres', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
-        fig.update_xaxes(showticklabels=False)
+        fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
+        fig.update_xaxes(visible=False, showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)    
 
     with col3:
@@ -142,13 +144,14 @@ def main():
 
 
     # Create three more columns for the next section
-    col4, col5, col6 = st.columns(3)
+    col4, col5 = st.columns(2)
 
     with col4:
         st.header('Artists per Genre')
         # Count the number of unique artists for each genre and select top 10
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
-        fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'Genres', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count')
+        fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count', color=artists_per_genre.index)
+        fig.update_xaxes(visible=False, showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)  
 
     with col5:
