@@ -8,11 +8,11 @@ import json
 import pandas as pd
 from dotenv import load_dotenv
 import plotly.express as px
-import streamlit.components.v1 as components
+import pickle
 
 st.set_page_config(page_title="Spotify Big Data Project", 
                    #page_icon=":musical_note:", 
-                   #layout="wide"
+                   layout="wide"
                    )
 
 # Spotify Developer Dashboard details
@@ -52,52 +52,10 @@ def get_auth_header(token):
 
 #query= {what I want to get}&type= artist, track, playlist, album, artist, playlist, track, show, episode, audiobook.&limit=1 (first artist that pops up, most popular artist)
 
-# Get new releases
-def get_new_releases(country):
-    # Find the country code for the given country name
-    row = df_countries[df_countries['country'] == country]
-    country_code = row.iloc[0]['country_code']
-    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)['albums']['items'][0]['name']
-    return json_result
-
-# Get artist new releases
-def get_artist_new_releases(country):
-    # Find the country code for the given country name
-    row = df_countries[df_countries['country'] == country]
-    country_code = row.iloc[0]['country_code']
-    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)['albums']['items'][0]['artists'][0]['name']
-    return json_result
-
-
 # Read country data
-df_countries= pd.read_excel('app/data/country-available-final.xlsx')
-df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
+with open(r"../app/data/new_releases.pkl", 'rb') as file:
+    df_countries = pickle.load(file)
 
-# Get new releases per country
-@st.cache_data()
-def pre_fetch_data():
-    # Get the new releases per country
-    df_countries['new_releases'] = [get_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
-
-    # Get the new release artist
-    df_countries['artist'] = [get_artist_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
-
-# Background pre-fetching function
-def background_pre_fetching():
-    with st.spinner('Pre-fetching data...'):
-        pre_fetch_data()
-    st.experimental_rerun()
-
-# Trigger background pre-fetching on app startup
-if st.session_state.get('first_run', True):
-    st.session_state['first_run'] = False
-    st.experimental_rerun()
 
 # Plot the map
 fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
@@ -124,9 +82,11 @@ fig.update_layout(
     ),
     font=dict(
         color='white'  # Set the text color to white
-    )
+    ),
+    autosize= False,
+    width=800,
+    height= 600
 )
-st.set_page_config(layout="wide")
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
 
@@ -164,21 +124,9 @@ def tracks_from_album(country):
 country= st.sidebar.selectbox(
     'Select a country to see the latest album and its tracks', (df_countries['country']))
 selected_tracks= tracks_from_album(country)
-selected_album= get_new_releases(country)
-selected_artist= get_artist_new_releases(country)
+selected_album= df_countries.loc[df_countries['country']== country,'new_releases'].values[0]
+selected_artist= df_countries.loc[df_countries['country']== country,'artist'].values[0]
 
-st.sidebar.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
+st.sidebar.write(f"The latest Album in **{country}** is **{selected_album}** by **{selected_artist}**")
 st.sidebar.write('Are you curious about its tracks? Check them out!🎧')
-st.sidebar.dataframe(selected_tracks, hide_index=True)
-
-# Run the background pre-fetching function
-components.html(
-    """
-    <script>
-    setTimeout(function() {
-        fetch('/streamlit_background_prefetching', {method: 'POST'});
-    }, 0);
-    </script>
-    """,
-    height=0,
-)
+st.sidebar.dataframe(selected_tracks, hide_index=True, use_container_width= True)
