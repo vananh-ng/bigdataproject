@@ -14,8 +14,8 @@ import pickle
 import streamlit as st
 import plotly.express as px
 import ast
-import matplotlib
-import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 
 
@@ -119,15 +119,15 @@ def main():
     # Explode 'genres' list into separate rows
     genres_popularity_df = df.explode('genres')
 
-    # Create a color mapping
+   # Create a color mapping
     unique_genres = pd.unique(genres_popularity_df['genres'])
     num_genres = len(unique_genres)
-    color_map = plt.get_cmap('tab20', num_genres)
+    color_palette = sns.cubehelix_palette(num_genres)
+    color_map = sns.color_palette(color_palette, num_genres)
 
-    genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map(i)[:3]) for i, genre in enumerate(unique_genres)}
-
-    # Map genre color to 'genre_index' in DataFrame
-    genres_popularity_df['color'] = genres_popularity_df['genres'].map(genre_to_color)
+    genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map[i]) for i, genre in enumerate(unique_genres)}
+    # Convert the RGB values to hex format
+    genre_to_color = {genre: matplotlib.colors.rgb2hex(color) for genre, color in genre_to_color.items()}
 
     # Create two columns
     col2, col3 = st.columns(2)

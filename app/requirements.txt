@@ -8,3 +8,4 @@ streamlit
 spotipy
 openpyxl
 matplotlib
+seaborn
