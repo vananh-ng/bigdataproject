@@ -100,13 +100,13 @@ def main():
         if i < 5:
             with row1[i]:
                 st.subheader(artist_name)
-                st.write(f"Follower count: {follower_count}")
+                st.write(f"Followers: {follower_count}")
                 st.image(first_image_url)
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
                 st.subheader(artist_name)
-                st.write(f"Follower count: {follower_count}")
+                st.write(f"Followers: {follower_count}")
                 st.image(first_image_url)
 
 
@@ -142,7 +142,7 @@ def main():
 
 
     # Create three more columns for the next section
-    col4, col5, col6 = st.columns(3)
+    col4, col5 = st.columns(2)
 
     with col4:
         st.header('Artists per Genre')
