@@ -125,9 +125,8 @@ def main():
     color_palette = sns.cubehelix_palette(num_genres)
     color_map = sns.color_palette(color_palette, num_genres)
 
-    genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map[i]) for i, genre in enumerate(unique_genres)}
     # Convert the RGB values to hex format
-    genre_to_color = {genre: matplotlib.colors.rgb2hex(color) for genre, color in genre_to_color.items()}
+    genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map[i]) for i, genre in enumerate(unique_genres)}
 
     # Create two columns
     col2, col3 = st.columns(2)
