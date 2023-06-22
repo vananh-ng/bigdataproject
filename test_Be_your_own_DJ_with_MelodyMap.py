@@ -132,6 +132,7 @@ def main():
         )
 
     # Song Recommendation
+    st.markdown("##")
     st.write("💚 Create your own playlist by choosing your favourite genre and features!")
     with st.container():
         col1, col2,col3,col4 = st.columns((2,0.5,0.5,0.5))
