@@ -11,6 +11,9 @@ import pickle
 import schedule
 import time
 
+'''This code is to update the new_releases dataframe with the data from the API:
+    It's scheudled to run every 3 days at 00:00 and replace the existing dataframe'''
+
 # Spotify Developer Dashboard details
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
