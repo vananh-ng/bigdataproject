@@ -138,7 +138,7 @@ selected_artist= df_countries.loc[df_countries['country']== country,'artist'].va
 image_url= get_new_releases_pic(country)
 
 st.sidebar.write(f"The latest Album in **{country}** is **{selected_album}** by **{selected_artist}**")
-st.image(image_url)
+st.sidebar.image(image_url)
 st.sidebar.write('Are you curious about its tracks? Check them out!🎧')
 st.sidebar.dataframe(selected_tracks, hide_index=True, use_container_width= True)
 st.sidebar.write("If you want to listen to it, go to the 'Be your own DJ with MelodyMap' tab and search for the song!")
