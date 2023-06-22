@@ -7,3 +7,10 @@ plotly
 streamlit
 spotipy
 openpyxl
+matplotlib
+pprint
+requests
+base64
+urllib
+pickle
+ast
