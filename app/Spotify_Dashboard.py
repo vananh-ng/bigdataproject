@@ -1,12 +1,20 @@
 # use logging for debugging, error logging, etc.
 # could pass the use_container_width=True to st.plotly_chart to make it get the size of the column containing the plot.
 
-import streamlit as st
 import pandas as pd
-import plotly.express as px
+import pprint as pp
+import numpy as np
+import requests
+from requests import post, get
+import base64
+import urllib
+import os
+import json
+from dotenv import load_dotenv
 import pickle
+import streamlit as st
+import plotly.express as px
 import ast
-
 
 
 st.set_page_config(
@@ -17,25 +25,7 @@ st.set_page_config(
 
 df = pd.read_pickle('app/data/album_and_artists.pkl')
 
-!pip install python-dotenv
-import pandas as pd
-import pprint as pp
-import numpy as np
-#import streamlit as st
-import requests
-from requests import post, get
-import base64
-import urllib
-import os
-import json
-from dotenv import load_dotenv
-#import plotly.express as px
-#import plotly.offline as pyo
-#import plotly.graph_objs as go
-#import plotly.express as px
-import pickle
-#import schedule
-# Spotify Developer Dashboard details
+
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
@@ -105,7 +95,7 @@ def main():
         st.subheader(artist_name)
         st.write(f"Follower count: {follower_count}")
         st.image(first_image_url)
-        
+
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
     #st.plotly_chart(fig2, use_container_width=True)
 
