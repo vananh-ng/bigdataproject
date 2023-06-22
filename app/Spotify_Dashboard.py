@@ -107,7 +107,7 @@ def main():
         else:
             with row2[i-5]:
                 formatted_count = "{:,}".format(follower_count)
-                st.write(f"Followers: {follower_count}")
+                st.write(f"Followers: {formatted_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
 
