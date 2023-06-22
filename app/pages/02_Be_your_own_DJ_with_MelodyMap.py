@@ -44,7 +44,7 @@ with col2:
 st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
 # GPT-based recommendation engine
-def get_completion(messages, model="gpt-3.5-turbo", temperature=0.1):
+def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -62,7 +62,9 @@ def run_model(system_message, user_message):
     ]
     response = get_completion(messages)
     return response
-system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. You should aim to suggest a maximum of 10 songs that align with their request. For each recommendation, please include a URL link to the corresponding song on Spotify."
+system_message = "As a Spotify playlist recommender, \
+    your task is to provide song recommendations based on users' description of their current mood.\
+    You should aim to suggest a maximum of 10 songs that align with their request."
 user_message = st.text_input("How's your mood today?")
 if st.button("Send"):
     response = run_model(system_message, user_message)
