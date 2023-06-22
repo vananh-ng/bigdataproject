@@ -14,6 +14,7 @@ import pickle
 import streamlit as st
 import plotly.express as px
 import ast
+import matplotlib
 import matplotlib.pyplot as plt
 
 
@@ -128,7 +129,8 @@ def main():
     genre_to_color = {genre: color_map(i) for i, genre in enumerate(unique_genres)}
 
     # Convert the RGB values to hex format
-    genre_to_color = {genre: matplotlib.colors.rgb2hex(color) for genre, color in genre_to_color.items()}
+    genre_to_color = {genre: matplotlib.colors.rgb2hex(color[:3]) for genre, color in genre_to_color.items()}
+
 
     # Map genre color to 'genre_index' in DataFrame
     genres_popularity_df['color'] = genres_popularity_df['genres'].map(genre_to_color)
