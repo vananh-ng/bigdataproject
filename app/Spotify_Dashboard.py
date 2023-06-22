@@ -122,12 +122,13 @@ def main():
    # Create a color mapping
     unique_genres = pd.unique(genres_popularity_df['genres'])
     num_genres = len(unique_genres)
-    color_palette = sns.cubehelix_palette(num_genres)
-    color_map = sns.color_palette(color_palette, num_genres)
 
-    # Convert the RGB values to hex format
-    genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map[i]) for i, genre in enumerate(unique_genres)}
+    # Generate a color palette
+    color_palette = sns.husl_palette(num_genres)
 
+    # Map each genre to a color
+    genre_to_color = {genre: matplotlib.colors.rgb2hex(color) for genre, color in zip(unique_genres, color_palette)}
+    
     # Create two columns
     col2, col3 = st.columns(2)
 
