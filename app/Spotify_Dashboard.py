@@ -1,6 +1,6 @@
 # use logging for debugging, error logging, etc.
 # could pass the use_container_width=True to st.plotly_chart to make it get the size of the column containing the plot.
-
+!pip install matplotlib
 import pandas as pd
 import pprint as pp
 import numpy as np
