@@ -118,7 +118,7 @@ def search_song(song_name):
     return song_info
 
 # Use the sidebar method for the input and button
-song_name = st.sidebar.text_input("Enter a Song Name:", value='Viva La Vida')
+song_name = st.sidebar.text_input("Enter a Song Name:", value='Nellie')
 
 song_info = search_song(song_name)
 
@@ -177,7 +177,7 @@ with st.container():
 
 tracks_per_page = 6
 test_feat = [acousticness, danceability, energy, instrumentalness, liveness, loudness, speechiness, valence, tempo]
-uris, audios = n_neighbors_uri_audio(genre, test_feat)
+uris, audios = n_neighbors_uri_audio(genre, start_year, end_year, test_feat)
 tracks = []
 for uri in uris:
     track = """<iframe src="https://open.spotify.com/embed/track/{}" width="260" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>""".format(uri)
