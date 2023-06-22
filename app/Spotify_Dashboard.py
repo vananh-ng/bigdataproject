@@ -17,24 +17,106 @@ st.set_page_config(
 
 df = pd.read_pickle('app/data/album_and_artists.pkl')
 
+!pip install python-dotenv
+import pandas as pd
+import pprint as pp
+import numpy as np
+#import streamlit as st
+import requests
+from requests import post, get
+import base64
+import urllib
+import os
+import json
+from dotenv import load_dotenv
+#import plotly.express as px
+#import plotly.offline as pyo
+#import plotly.graph_objs as go
+#import plotly.express as px
+import pickle
+#import schedule
+# Spotify Developer Dashboard details
+load_dotenv()
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+
+# API Access
+def get_token():
+    auth_string = client_id + ':' + client_secret
+    auth_bytes = auth_string.encode("utf-8")
+    # Spotify requests to encode the client ID and client secret using base64
+    auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
+
+    url = "https://accounts.spotify.com/api/token"
+    headers = {
+        "Authorization": "Basic " + auth_base64,
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {"grant_type": "client_credentials"}
+    # Make the request
+    result = post(url,headers= headers, data= data)
+    # Convert the result (json) into a python dictionary
+    json_result = json.loads(result.content) 
+    token = json_result["access_token"]
+    return token
+
+token= get_token()
+
+# Function to construct the header to send a request
+def get_auth_header(token):
+    return{"Authorization": "Bearer " + token}
+
+def search_for_artist(token, artist_name):
+    url = "https://api.spotify.com/v1/search"
+    headers = get_auth_header(token)
+    query = f"?q={artist_name}&type=artist&limit=1"
+
+    query_url = url + query
+    result = get(query_url, headers=headers)
+    json_result = json.loads(result.content)
+    return(json_result)
+
+
 
 def main():
+
     st.title('Spotify Dashboard')
 
-    # Create three columns
-    col1, col2, col3 = st.columns(3)
+    
+    json_result = []
 
-    with col1:
-        st.header("Popular Artists")
-        top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
-        fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
-        st.plotly_chart(fig2, use_container_width=True)
+    st.header("Popular Artists")
+    top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
+    for artist in top_artists.index:
+        json_result.append(search_for_artist(token, artist))
+
+    for result in json_result:
+        # Get the artist data from the API result
+        artist_data = result['artists']['items'][0]
+
+        # Get the artist's name and follower count
+        artist_name = artist_data['name']
+        follower_count = artist_data['followers']['total']
+
+        # Get the URL of the first image
+        first_image_url = artist_data['images'][0]['url']
+
+        # Display the artist's name, follower count, and image
+        st.subheader(artist_name)
+        st.write(f"Follower count: {follower_count}")
+        st.image(first_image_url)
+        
+    #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
+    #st.plotly_chart(fig2, use_container_width=True)
 
 
 
 
     # Convert 'genres' from string representation of list to actual list
     df['genres'] = df['genres'].apply(ast.literal_eval) 
+
+    # Create three columns
+    col2, col3 = st.columns(2)
 
     with col2:
         st.header('Genres Popularity')
