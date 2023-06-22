@@ -126,7 +126,7 @@ def get_new_releases_pic(country):
     url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
-    json_result = json.loads(result.content)['albums']['items'][0]['images'][2]['url']
+    json_result = json.loads(result.content)['albums']['items'][0]['images'][1]['url']
     return json_result
 
 # Use the sidebar method for the input and button
