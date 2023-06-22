@@ -75,7 +75,7 @@ def main():
     with col1:
         st.title('Spotify Dashboard')
     with col2:
-        st.image('app/images/logo2.png', width=100)
+        st.image('app/images/logo3.png', width=100)
     
     st.header("Current Top Artists Worldwide")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
