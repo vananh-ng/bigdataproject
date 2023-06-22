@@ -91,8 +91,8 @@ def main():
         # Get the artist data from the API result
         artist_data = result['artists']['items'][0]
 
-        # Get the URL of the third image (small)
-        image_url = artist_data['images'][2]['url']
+        # Get the URL of the second image)
+        image_url = artist_data['images'][1]['url']
 
         # Display the artist's name, follower count, and image
         # In the first five columns (i.e., the first row)
@@ -109,11 +109,7 @@ def main():
                 st.write(f"Followers: {formatted_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
-
         i += 1
-
-    #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
-    #st.plotly_chart(fig2, use_container_width=True)
 
 
 
