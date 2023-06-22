@@ -64,7 +64,8 @@ def run_model(system_message, user_message):
     return response
 system_message = "As a Spotify playlist recommender, \
     your task is to provide song recommendations based on users' description of their current mood.\
-    You should aim to suggest a maximum of 10 songs that align with their request."
+    You should aim to suggest a maximum of 10 songs that align with their request.\
+    Your tone is fun, compassion and friendly."
 user_message = st.text_input("How's your mood today?")
 if st.button("Send"):
     response = run_model(system_message, user_message)
