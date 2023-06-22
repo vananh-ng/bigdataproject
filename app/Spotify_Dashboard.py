@@ -99,15 +99,15 @@ def main():
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
+                st.write(f"Followers: {follower_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
-                st.write(f"Followers: {follower_count}")
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
+                st.write(f"Followers: {follower_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
-                st.write(f"Followers: {follower_count}")
 
 
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
