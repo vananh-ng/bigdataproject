@@ -26,11 +26,9 @@ def main():
 
     with col1:
         st.header("Popular Artists")
-        top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
+        top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=True).head(10)
         fig2 = px.bar(top_artists, y=top_artists.index, x=top_artists.values, labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
         st.plotly_chart(fig2, use_container_width=True)
-
-
 
     # Convert 'genres' from string representation of list to actual list
     df['genres'] = df['genres'].apply(ast.literal_eval) 
