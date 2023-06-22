@@ -102,17 +102,17 @@ def main():
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
+                st.subheader(artist_name)
+                st.image(image_url)
                 formatted_count = "{:,.0f}".format(followers_count)
                 st.write(f"Followers: {formatted_count}")
-                st.image(image_url)
-                st.subheader(artist_name)
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
+                st.subheader(artist_name)
+                st.image(image_url)
                 formatted_count = "{:,.0f}".format(followers_count)
                 st.write(f"Followers: {formatted_count}")
-                st.image(image_url)
-                st.subheader(artist_name)
         i += 1
 
     # Convert 'genres' from string representation of list to actual list
