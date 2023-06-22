@@ -55,7 +55,7 @@ def get_auth_header(token):
 #query= {what I want to get}&type= artist, track, playlist, album, artist, playlist, track, show, episode, audiobook.&limit=1 (first artist that pops up, most popular artist)
 
 # Read country data
-with open(r"C:\Users\sofia\OneDrive\Documentos\GitHub\bigdataproject\app\data\new_releases.pkl", 'rb') as file:
+with open(r"../app/data/new_releases.pkl", 'rb') as file:
     df_countries = pickle.load(file)
 
 # Plot the map
@@ -82,7 +82,10 @@ fig.update_layout(
     ),
     font=dict(
         color='white'  # Set the text color to white
-    )
+    ),
+    autosize= False,
+    width=800,
+    height= 600
 )
 st.title('New releases World Map')
 st.plotly_chart(fig, use_container_width=True)
@@ -119,12 +122,11 @@ def tracks_from_album(country):
 country= st.sidebar.selectbox(
     'Select a country to see the latest album and its tracks', (df_countries['country']))
 selected_tracks= tracks_from_album(country)
-selected_row= df_countries[df_countries['country']== country]
-selected_album= selected_row['new_releases']
-selected_artist= selected_row['artist']
+selected_album= df_countries.loc[df_countries['country']== country,'new_releases'].values[0]
+selected_artist= df_countries.loc[df_countries['country']== country,'artist'].values[0]
 
-st.sidebar.write(f"The latest Album in {country} is {selected_album} by {selected_artist}")
+st.sidebar.write(f"The latest Album in **{country}** is **{selected_album}** by **{selected_artist}**")
 st.sidebar.write('Are you curious about its tracks? Check them out!🎧')
-st.sidebar.dataframe(selected_tracks, hide_index=True)
+st.sidebar.dataframe(selected_tracks, hide_index=True, use_container_width= True)
 
 
