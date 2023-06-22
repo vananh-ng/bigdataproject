@@ -27,8 +27,10 @@ def main():
     with col1:
         st.header("Popular Artists")
         top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
-        fig2 = px.bar(top_artists, x=top_artists.index, y=top_artists.values, labels={'x':'Artists', 'y':'Followers'}, title="Popular Artists")
+        fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
         st.plotly_chart(fig2, use_container_width=True)
+
+
 
 
     # Convert 'genres' from string representation of list to actual list
@@ -41,6 +43,7 @@ def main():
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
         fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'Genres', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
+        fig.update_xaxes(showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)    
 
     with col3:
