@@ -21,8 +21,8 @@ df = pd.read_pickle('app/data/album_and_artists.pkl')
 def main():
     st.title('Spotify Dashboard')
 
-    # Create three columns
-    col1, col2, col3 = st.columns(3)
+    # Create two columns
+    col1, col2 = st.columns(2)
 
     with col1:
         st.header("Popular Artists")
@@ -41,24 +41,26 @@ def main():
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
         fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'Genres', 'y':'Album Count'}, title='Top 10 Genres by Album Count')
-        st.plotly_chart(fig)    
+        st.plotly_chart(fig)     
+
+
+    # Create two more columns for the next section
+    col3, col4 = st.columns(2)
 
     with col3:
         st.header('Artists per Genre')
         # Count the number of unique artists for each genre and select top 10
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
         fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'Genres', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count')
-        st.plotly_chart(fig)    
-
-
-    # Create three more columns for the next section
-    col4, col5, col6 = st.columns(3)
+        st.plotly_chart(fig)   
 
     with col4:
         st.header('Top Albums by Followers')
         top_albums = df.groupby('name')['followers'].sum().nlargest(10)
         fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
         st.plotly_chart(fig)
+
+    col5, col6 = st.columns(2)
 
     with col5:
         st.header('Distribution of Album Types')
