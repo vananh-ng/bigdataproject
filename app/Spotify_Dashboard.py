@@ -120,15 +120,26 @@ def main():
     # Create three columns
     col2, col3 = st.columns(2)
 
+    # Explode 'genres' list into separate rows
+    genres_popularity_df = df.explode('genres')
+
+    # Get the unique genres and map each one to an index
+    unique_genres = pd.unique(genres_popularity_df['genres'])
+    genre_to_index = {genre: i for i, genre in enumerate(unique_genres)}
+
+    # Add a new column to the DataFrame for the genre index
+    genres_popularity_df['genre_index'] = genres_popularity_df['genres'].map(genre_to_index)
+
+
     with col2:
         st.header('Genres Popularity')
-        # Explode 'genres' list into separate rows
-        genres_popularity_df = df.explode('genres')
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
-        fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
+        fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values,
+                    color=genres_popularity_df.loc[genre_popularity.index, 'genre_index'],
+                    labels={'x':'', 'y':'Album Count'}, title='Top 10 Genres by Album Count')
         fig.update_xaxes(visible=False, showticklabels=False)
-        st.plotly_chart(fig, use_container_width=True)    
+        st.plotly_chart(fig, use_container_width=True)   
 
     with col3:
         st.header('Top Albums by Followers')
@@ -146,9 +157,11 @@ def main():
         st.header('Artists per Genre')
         # Count the number of unique artists for each genre and select top 10
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
-        fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count', color=artists_per_genre.index)
+        fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values,
+                    color=genres_popularity_df.loc[artists_per_genre.index, 'genre_index'],
+                    labels={'x':'', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count')
         fig.update_xaxes(visible=False, showticklabels=False)
-        st.plotly_chart(fig, use_container_width=True)  
+        st.plotly_chart(fig, use_container_width=True) 
 
     with col5:
         st.header('Distribution of Album Types')
