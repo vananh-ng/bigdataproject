@@ -80,7 +80,11 @@ def main():
     for artist in top_artists.index:
         json_result.append(search_for_artist(token, artist))
 
-    for result in json_result:
+    # Create two rows of columns
+    row1 = st.columns(5)
+    row2 = st.columns(5)
+
+    for i, result in enumerate(json_result):
         # Get the artist data from the API result
         artist_data = result['artists']['items'][0]
 
@@ -88,13 +92,23 @@ def main():
         artist_name = artist_data['name']
         follower_count = artist_data['followers']['total']
 
-        # Get the URL of the first image
-        first_image_url = artist_data['images'][0]['url']
+        # Get the URL of the third image (small)
+        first_image_url = artist_data['images'][2]['url']
 
         # Display the artist's name, follower count, and image
-        st.subheader(artist_name)
-        st.write(f"Follower count: {follower_count}")
-        st.image(first_image_url)
+        # In the first five columns (i.e., the first row)
+        if i < 5:
+            with row1[i]:
+                st.subheader(artist_name)
+                st.write(f"Follower count: {follower_count}")
+                st.image(first_image_url)
+        # In the second five columns (i.e., the second row)
+        else:
+            with row2[i-5]:
+                st.subheader(artist_name)
+                st.write(f"Follower count: {follower_count}")
+                st.image(first_image_url)
+
 
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
     #st.plotly_chart(fig2, use_container_width=True)
