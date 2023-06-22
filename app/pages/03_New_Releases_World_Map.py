@@ -83,15 +83,15 @@ fig.update_layout(
         color='white'  # Set the text color to white
     ),
     autosize= False,
-    width=800,
-    height= 600
+    width=1000,
+    height= 750
 )
 col1, col2 = st.columns([7, 1]) 
 with col1:
     st.title('New releases World Map')
 with col2:
     st.image('app/images/logo2.png', width=100)
-st.plotly_chart(fig)#, use_container_width=True)
+st.plotly_chart(fig, use_container_width=True)
 
 
 
