@@ -30,6 +30,7 @@ def main():
         fig2 = px.bar(top_artists, y=top_artists.index, x=top_artists.values, labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
         st.plotly_chart(fig2, use_container_width=True)
 
+
     # Convert 'genres' from string representation of list to actual list
     df['genres'] = df['genres'].apply(ast.literal_eval) 
 
