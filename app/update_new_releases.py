@@ -106,7 +106,7 @@ def update_new_releases(pickle_file_path):
     os.replace(temp_pickle_file_path, pickle_file_path)
     print("New releases updated successfully!")
 
-pickle_file_path= r"C:\Users\sofia\OneDrive\Documentos\GitHub\bigdataproject\app\data\new_releases.pkl"
+pickle_file_path= r"/data/new_releases.pkl"
 schedule.every(3).days.at("00:00").do(update_new_releases, pickle_file_path)
 
 while True: # This starts an infinite loop.
