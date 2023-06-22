@@ -125,9 +125,6 @@ def main():
     color_map = plt.get_cmap('tab20', num_genres)
 
     genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map(i)[:3]) for i, genre in enumerate(unique_genres)}
-    # Convert the RGB values to hex format
-    genre_to_color = {genre: matplotlib.colors.rgb2hex(color[:3]) for genre, color in genre_to_color.items()}
-
 
     # Map genre color to 'genre_index' in DataFrame
     genres_popularity_df['color'] = genres_popularity_df['genres'].map(genre_to_color)
@@ -141,9 +138,11 @@ def main():
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10).reset_index()
         genre_popularity.columns = ['genres', 'count']
         genre_popularity['color'] = genre_popularity['genres'].map(genre_to_color)
-        fig = px.bar(genre_popularity, x='genres', y='count', color='color', labels={'genres':'', 'count':'Album Count'}, title='Top 10 Genres by Album Count')
+        fig = px.bar(genre_popularity, x='genres', y='count', color='genres',
+                    labels={'genres':'', 'count':'Album Count'}, title='Top 10 Genres by Album Count',
+                    color_discrete_sequence=genre_popularity['color'])
         fig.update_xaxes(visible=False, showticklabels=False)
-        st.plotly_chart(fig, use_container_width=True) 
+        st.plotly_chart(fig, use_container_width=True)
 
     with col3:
         st.header('Top Albums by Followers')
@@ -162,7 +161,9 @@ def main():
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10).reset_index()
         artists_per_genre.columns = ['genres', 'count']
         artists_per_genre['color'] = artists_per_genre['genres'].map(genre_to_color)
-        fig = px.bar(artists_per_genre, x='genres', y='count', color='color', labels={'genres':'', 'count':'Artist Count'}, title='Top 10 Genres by Artist Count')
+        fig = px.bar(artists_per_genre, x='genres', y='count', color='genres',
+                    labels={'genres':'', 'count':'Artist Count'}, title='Top 10 Genres by Artist Count',
+                    color_discrete_sequence=artists_per_genre['color'])
         fig.update_xaxes(visible=False, showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)
 
