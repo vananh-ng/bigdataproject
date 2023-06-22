@@ -118,14 +118,27 @@ def tracks_from_album(country):
     tracks_df= pd.DataFrame(tracks_data)
     return tracks_df
 
+# Get album image
+def get_new_releases_pic(country):
+    # Find the country code for the given country name
+    row = df_countries[df_countries['country'] == country]
+    country_code = row.iloc[0]['country_code']
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)['albums']['items'][0]['images'][1]['url']
+    return json_result
+
 # Use the sidebar method for the input and button
 country= st.sidebar.selectbox(
     'Select a country to see the latest album and its tracks', (df_countries['country']))
 selected_tracks= tracks_from_album(country)
 selected_album= df_countries.loc[df_countries['country']== country,'new_releases'].values[0]
 selected_artist= df_countries.loc[df_countries['country']== country,'artist'].values[0]
+image_url= get_new_releases_pic(country)
 
 st.sidebar.write(f"The latest Album in **{country}** is **{selected_album}** by **{selected_artist}**")
+st.sidebar.image(image_url)
 st.sidebar.write('Are you curious about its tracks? Check them out!🎧')
 st.sidebar.dataframe(selected_tracks, hide_index=True, use_container_width= True)
 st.sidebar.write("If you want to listen to it, go to the 'Be your own DJ with MelodyMap' tab and search for the song!")
