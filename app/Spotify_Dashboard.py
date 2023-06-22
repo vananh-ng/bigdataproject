@@ -44,23 +44,23 @@ def main():
         st.plotly_chart(fig, use_container_width=True)    
 
     with col3:
-        st.header('Artists per Genre')
-        # Count the number of unique artists for each genre and select top 10
-        artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
-        fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'Genres', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count')
-        st.plotly_chart(fig, use_container_width=True)    
+        st.header('Top Albums by Followers')
+        # remove 'Spotify Singles' from df column 'album_name'
+        df_tmp = df[df['name'] != 'Spotify Singles']
+        top_albums = df_tmp.groupby('name')['followers'].sum().nlargest(10)
+        fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
+        st.plotly_chart(fig, use_container_width=True)  
 
 
     # Create three more columns for the next section
     col4, col5, col6 = st.columns(3)
 
     with col4:
-        st.header('Top Albums by Followers')
-        # remove 'Spotify Singles' from df column 'album_name'
-        df_tmp = df[df['name'] != 'Spotify Singles']
-        top_albums = df_tmp.groupby('name')['followers'].sum().nlargest(10)
-        fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
-        st.plotly_chart(fig, use_container_width=True)
+        st.header('Artists per Genre')
+        # Count the number of unique artists for each genre and select top 10
+        artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10)
+        fig = px.bar(artists_per_genre, x=artists_per_genre.index, y=artists_per_genre.values, labels={'x':'Genres', 'y':'Artist Count'}, title='Top 10 Genres by Artist Count')
+        st.plotly_chart(fig, use_container_width=True)  
 
     with col5:
         st.header('Distribution of Album Types')
