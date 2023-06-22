@@ -73,7 +73,7 @@ def search_for_artist(token, artist_name):
 def main():
     col1, col2 = st.columns(2)
     with col1:
-        st.image('app/data/logo1.png', width=200)
+        st.image('app/images/logo2.png', width=200)
     with col2:
         st.title('Spotify Dashboard')
     
