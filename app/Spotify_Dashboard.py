@@ -16,8 +16,7 @@ import plotly.express as px
 import ast
 import seaborn as sns
 import matplotlib
-
-
+import matplotlib.pyplot as plt
 
 
 st.set_page_config(
