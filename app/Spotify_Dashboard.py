@@ -71,9 +71,11 @@ def search_for_artist(token, artist_name):
 
 
 def main():
-    st.image('app/images/logo1.jpg', width=200)
-    st.title('Spotify Dashboard')
-
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image('app/data/spotify_logo.png', width=200)
+    with col2:
+        st.title('Spotify Dashboard')
     
     st.header("Popular Artists")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
@@ -130,9 +132,9 @@ def main():
     genre_to_color = {genre: matplotlib.colors.rgb2hex(color) for genre, color in zip(unique_genres, color_palette)}
     
     # Create two columns
-    col2, col3 = st.columns(2)
+    col3, col4 = st.columns(2)
 
-    with col2:
+    with col3:
         st.header('Genres Popularity')
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10).reset_index()
@@ -144,7 +146,7 @@ def main():
         fig.update_xaxes(visible=False, showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)
 
-    with col3:
+    with col4:
         st.header('Top Albums by Followers')
         # remove 'Spotify Singles' from df column 'album_name'
         df_tmp = df[df['name'] != 'Spotify Singles']
@@ -153,9 +155,9 @@ def main():
         st.plotly_chart(fig, use_container_width=True)  
 
     # Create two more columns for the next section
-    col4, col5 = st.columns(2)
+    col5, col6 = st.columns(2)
 
-    with col4:
+    with col5:
         st.header('Artists per Genre')
         # Count the number of unique artists for each genre and select top 10
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10).reset_index()
@@ -167,7 +169,7 @@ def main():
         fig.update_xaxes(visible=False, showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)
 
-    with col5:
+    with col6:
         st.header('Distribution of Album Types')
         fig = px.pie(df, names='album_type', title='Distribution of Album Types')
         st.plotly_chart(fig, use_container_width=True)
