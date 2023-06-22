@@ -77,7 +77,7 @@ def main():
     with col2:
         st.image('app/images/logo2.png', width=100)
     
-    st.header("Popular Artists")
+    st.header("Current Top Artists Worldwide")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
 
     # Convert top_artists to dictionary and sort it
