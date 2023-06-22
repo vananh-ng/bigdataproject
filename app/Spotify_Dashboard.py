@@ -71,7 +71,7 @@ def search_for_artist(token, artist_name):
 
 
 def main():
-    col1, col2 = st.columns([5, 1])
+    col1, col2 = st.columns([5, 1], vertical_alignment='center') 
     with col1:
         st.title('Spotify Dashboard')
     with col2:
