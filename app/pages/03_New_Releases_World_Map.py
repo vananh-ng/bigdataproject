@@ -82,9 +82,9 @@ fig.update_layout(
     font=dict(
         color='white'  # Set the text color to white
     ),
-    autosize= False,
-    width=800,
-    height= 600
+    autosize= True,
+    #width=800,
+    #height= 600
 )
 col1, col2 = st.columns([7, 1]) 
 with col1:
