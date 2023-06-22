@@ -41,6 +41,7 @@ def main():
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
         fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'Genres', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
+        fig.update_xaxes(showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)    
 
     with col3:
