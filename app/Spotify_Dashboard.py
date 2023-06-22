@@ -73,24 +73,23 @@ def main():
     st.title('Spotify Dashboard')
 
     
-    json_result = []
-
     st.header("Popular Artists")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
-    for artist in top_artists.index:
-        json_result.append(search_for_artist(token, artist))
+
+    # Convert top_artists to dictionary and sort it
+    top_artists_dict = dict(top_artists)
+    top_artists_dict = dict(sorted(top_artists_dict.items(), key=lambda item: item[1], reverse=True))
 
     # Create two rows of columns
     row1 = st.columns(5)
     row2 = st.columns(5)
 
-    for i, result in enumerate(json_result):
+    i = 0
+    for artist_name, followers_count in top_artists_dict.items():
+        result = search_for_artist(token, artist_name)
+
         # Get the artist data from the API result
         artist_data = result['artists']['items'][0]
-
-        # Get the artist's name and follower count
-        artist_name = artist_data['name']
-        follower_count = artist_data['followers']['total']
 
         # Get the URL of the third image (small)
         image_url = artist_data['images'][2]['url']
@@ -99,18 +98,19 @@ def main():
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
-                formatted_count = "{:,}".format(follower_count)
+                formatted_count = "{:,}".format(followers_count)
                 st.write(f"Followers: {formatted_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
-                formatted_count = "{:,}".format(follower_count)
+                formatted_count = "{:,}".format(followers_count)
                 st.write(f"Followers: {formatted_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
 
+        i += 1
 
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
     #st.plotly_chart(fig2, use_container_width=True)
