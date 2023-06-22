@@ -93,21 +93,21 @@ def main():
         follower_count = artist_data['followers']['total']
 
         # Get the URL of the third image (small)
-        first_image_url = artist_data['images'][2]['url']
+        image_url = artist_data['images'][2]['url']
 
         # Display the artist's name, follower count, and image
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
-                st.markdown(f"<h3 style='text-align: center;'>{artist_name}</h3>", unsafe_allow_html=True)
-                st.image(first_image_url)
-                st.markdown(f"<h4 style='text-align: center;'>Followers: {follower_count}</h4>", unsafe_allow_html=True)
+                st.image(image_url)
+                st.subheader(artist_name)
+                st.write(f"Followers: {follower_count}")
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
-                st.markdown(f"<h3 style='text-align: center;'>{artist_name}</h3>", unsafe_allow_html=True)
-                st.image(first_image_url)
-                st.markdown(f"<h4 style='text-align: center;'>Followers: {follower_count}</h4>", unsafe_allow_html=True)
+                st.image(image_url)
+                st.subheader(artist_name)
+                st.write(f"Followers: {follower_count}")
 
 
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
