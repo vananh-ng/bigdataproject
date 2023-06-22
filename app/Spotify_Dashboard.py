@@ -99,15 +99,15 @@ def main():
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
-                st.subheader(artist_name)
-                st.write(f"Followers: {follower_count}")
+                st.markdown(f"<h3 style='text-align: center;'>{artist_name}</h3>", unsafe_allow_html=True)
                 st.image(first_image_url)
+                st.markdown(f"<h4 style='text-align: center;'>Followers: {follower_count}</h4>", unsafe_allow_html=True)
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
-                st.subheader(artist_name)
-                st.write(f"Followers: {follower_count}")
+                st.markdown(f"<h3 style='text-align: center;'>{artist_name}</h3>", unsafe_allow_html=True)
                 st.image(first_image_url)
+                st.markdown(f"<h4 style='text-align: center;'>Followers: {follower_count}</h4>", unsafe_allow_html=True)
 
 
     #fig2 = px.bar(top_artists, y=top_artists.index[::-1], x=top_artists.values[::-1], labels={'y':'Artists', 'x':'Followers'}, title="Popular Artists")
@@ -128,7 +128,7 @@ def main():
         genres_popularity_df = df.explode('genres')
         # Count the number of albums for each genre and select top 10
         genre_popularity = genres_popularity_df['genres'].value_counts().head(10)
-        fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'Genres', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
+        fig = px.bar(genre_popularity, x=genre_popularity.index, y=genre_popularity.values, labels={'x':'', 'y':'Album Count'}, title='Top 10 Genres by Album Count', color=genre_popularity.index)
         fig.update_xaxes(showticklabels=False)
         st.plotly_chart(fig, use_container_width=True)    
 
