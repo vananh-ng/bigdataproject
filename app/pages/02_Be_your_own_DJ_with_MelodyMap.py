@@ -83,9 +83,9 @@ audio_feats = ["acousticness", "danceability", "energy", "instrumentalness", "li
 exploded_track_df = load_data()
 
 # knn model
-def n_neighbors_uri_audio(genre, test_feat):
+def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
     genre = genre.lower()
-    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre)]
+    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre) & (exploded_track_df["release_year"]>=start_year) & (exploded_track_df["release_year"]<=end_year)]
     genre_data = genre_data.sort_values(by='popularity', ascending=False)[:500]
     neigh = NearestNeighbors()
     neigh.fit(genre_data[audio_feats].to_numpy())
@@ -184,8 +184,8 @@ for uri in uris:
     tracks.append(track)
 
 if 'previous_inputs' not in st.session_state:
-    st.session_state['previous_inputs'] = [genre] + test_feat
-current_inputs = [genre] + test_feat
+    st.session_state['previous_inputs'] = [genre, start_year, end_year] + test_feat
+current_inputs = [genre, start_year, end_year] + test_feat
 if current_inputs != st.session_state['previous_inputs']:
     if 'start_track_i' in st.session_state:
         st.session_state['start_track_i'] = 0
