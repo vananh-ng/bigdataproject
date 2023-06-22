@@ -56,6 +56,8 @@ def main():
 
     with col4:
         st.header('Top Albums by Followers')
+        # remove 'Spotify Singles' from df column 'album_name'
+        df = df[df['album_name'] != 'Spotify Singles']
         top_albums = df.groupby('name')['followers'].sum().nlargest(10)
         fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
         st.plotly_chart(fig, use_container_width=True)
