@@ -71,12 +71,11 @@ def search_for_artist(token, artist_name):
 
 
 def main():
-    col1, col2 = st.columns([4, 1])
+    col1, col2 = st.columns([5, 1])
     with col1:
         st.title('Spotify Dashboard')
     with col2:
-        st.image('app/images/logo2.png', width=100)
-
+        st.image('app/images/logo2.png', width=150)
     
     st.header("Popular Artists")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
