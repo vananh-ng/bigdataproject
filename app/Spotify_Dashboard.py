@@ -98,14 +98,14 @@ def main():
         # In the first five columns (i.e., the first row)
         if i < 5:
             with row1[i]:
-                formatted_count = "{:,}".format(followers_count)
+                formatted_count = "{:,.0f}".format(followers_count)
                 st.write(f"Followers: {formatted_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
         # In the second five columns (i.e., the second row)
         else:
             with row2[i-5]:
-                formatted_count = "{:,}".format(followers_count)
+                formatted_count = "{:,.0f}".format(followers_count)
                 st.write(f"Followers: {formatted_count}")
                 st.image(image_url)
                 st.subheader(artist_name)
