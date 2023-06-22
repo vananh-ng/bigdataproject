@@ -86,8 +86,12 @@ fig.update_layout(
     width=800,
     height= 600
 )
-st.title('New releases World Map')
-st.plotly_chart(fig, use_container_width=True)
+col1, col2 = st.columns([7, 1]) 
+with col1:
+    st.title('New releases World Map')
+with col2:
+    st.image('app/images/logo2.png', width=100)
+st.plotly_chart(fig)#, use_container_width=True)
 
 
 

@@ -35,7 +35,12 @@ st.set_page_config(page_title="Spotify Big Data Project",
                 #page_icon=":musical_note:", 
                 layout="wide")
 title = "Be your own DJ with MelodyMap!"
-st.title(title)
+col1, col2 = st.columns([7, 1]) 
+with col1:
+    st.title(title)
+with col2:
+    st.image('app/images/logo2.png', width=100)
+
 st.markdown("##")
 st.write("💚 Create your own playlist based on your mood!")
 # GPT-based recommendation engine
