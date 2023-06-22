@@ -119,15 +119,12 @@ def main():
     # Explode 'genres' list into separate rows
     genres_popularity_df = df.explode('genres')
 
-    # Define unique_genres here
-    unique_genres = pd.unique(genres_popularity_df['genres'])
-
     # Create a color mapping
+    unique_genres = pd.unique(genres_popularity_df['genres'])
     num_genres = len(unique_genres)
     color_map = plt.get_cmap('tab20', num_genres)
 
-    genre_to_color = {genre: color_map(i) for i, genre in enumerate(unique_genres)}
-
+    genre_to_color = {genre: matplotlib.colors.rgb2hex(color_map(i)[:3]) for i, genre in enumerate(unique_genres)}
     # Convert the RGB values to hex format
     genre_to_color = {genre: matplotlib.colors.rgb2hex(color[:3]) for genre, color in genre_to_color.items()}
 
@@ -140,17 +137,13 @@ def main():
 
     with col2:
         st.header('Genres Popularity')
-        genre_popularity = genres_popularity_df['genres'].value_counts().reset_index()
+        # Count the number of albums for each genre and select top 10
+        genre_popularity = genres_popularity_df['genres'].value_counts().head(10).reset_index()
         genre_popularity.columns = ['genres', 'count']
         genre_popularity['color'] = genre_popularity['genres'].map(genre_to_color)
-        
-        fig, ax = plt.subplots()
-        ax.bar(genre_popularity['genres'], genre_popularity['count'], color=genre_popularity['color'])
-        plt.title('Top 10 Genres by Album Count')
-        plt.xlabel('')
-        plt.ylabel('Album Count')
-        plt.xticks([])
-        st.pyplot(fig) 
+        fig = px.bar(genre_popularity, x='genres', y='count', color='color', labels={'genres':'', 'count':'Album Count'}, title='Top 10 Genres by Album Count')
+        fig.update_xaxes(visible=False, showticklabels=False)
+        st.plotly_chart(fig, use_container_width=True) 
 
     with col3:
         st.header('Top Albums by Followers')
@@ -165,17 +158,13 @@ def main():
 
     with col4:
         st.header('Artists per Genre')
-        artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().reset_index()
+        # Count the number of unique artists for each genre and select top 10
+        artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().sort_values(ascending=False).head(10).reset_index()
         artists_per_genre.columns = ['genres', 'count']
         artists_per_genre['color'] = artists_per_genre['genres'].map(genre_to_color)
-
-        fig, ax = plt.subplots()
-        ax.bar(artists_per_genre['genres'], artists_per_genre['count'], color=artists_per_genre['color'])
-        plt.title('Top 10 Genres by Artist Count')
-        plt.xlabel('')
-        plt.ylabel('Artist Count')
-        plt.xticks([])
-        st.pyplot(fig)
+        fig = px.bar(artists_per_genre, x='genres', y='count', color='color', labels={'genres':'', 'count':'Artist Count'}, title='Top 10 Genres by Artist Count')
+        fig.update_xaxes(visible=False, showticklabels=False)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col5:
         st.header('Distribution of Album Types')
