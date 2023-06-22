@@ -140,9 +140,14 @@ def main():
         genre_popularity = genres_popularity_df['genres'].value_counts().reset_index()
         genre_popularity.columns = ['genres', 'count']
         genre_popularity['color'] = genre_popularity['genres'].map(genre_to_color)
-        fig = px.bar(genre_popularity, x='genres', y='count', color='color', labels={'genres':'', 'count':'Album Count'}, title='Top 10 Genres by Album Count')
-        fig.update_xaxes(visible=False, showticklabels=False)
-        st.plotly_chart(fig, use_container_width=True)   
+        
+        fig, ax = plt.subplots()
+        ax.bar(genre_popularity['genres'], genre_popularity['count'], color=genre_popularity['color'])
+        plt.title('Top 10 Genres by Album Count')
+        plt.xlabel('')
+        plt.ylabel('Album Count')
+        plt.xticks([])
+        st.pyplot(fig) 
 
     with col3:
         st.header('Top Albums by Followers')
@@ -160,9 +165,14 @@ def main():
         artists_per_genre = genres_popularity_df.groupby('genres')['artists_name'].nunique().reset_index()
         artists_per_genre.columns = ['genres', 'count']
         artists_per_genre['color'] = artists_per_genre['genres'].map(genre_to_color)
-        fig = px.bar(artists_per_genre, x='genres', y='count', color='color', labels={'genres':'', 'count':'Artist Count'}, title='Top 10 Genres by Artist Count')
-        fig.update_xaxes(visible=False, showticklabels=False)
-        st.plotly_chart(fig, use_container_width=True)
+
+        fig, ax = plt.subplots()
+        ax.bar(artists_per_genre['genres'], artists_per_genre['count'], color=artists_per_genre['color'])
+        plt.title('Top 10 Genres by Artist Count')
+        plt.xlabel('')
+        plt.ylabel('Artist Count')
+        plt.xticks([])
+        st.pyplot(fig)
 
     with col5:
         st.header('Distribution of Album Types')
