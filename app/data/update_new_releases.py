@@ -87,16 +87,15 @@ def update_new_releases(pickle_file_path):
     # Load the new_releases
     with open(pickle_file_path, 'rb') as file:
         df_countries = pickle.load(file)
-    for index, row in df_countries.iterrows():
-        country = row['country']
-        new_release = get_new_releases(country)
-        artist = get_artist_new_releases(country)
 
-        if row['new_releases'] != new_release:
-            df_countries.at[index, 'new_releases'] = new_release
+    #Modify for Namibia: it detects NaN instead of NA country code
+    df_countries.iloc[115,4]='NA' 
+        
+    # Get the new releases per country
+    df_countries['new_releases'] = [get_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
 
-        if row['artist'] != artist:
-            df_countries.at[index, 'artist'] = artist
+    # Get the new release artist
+    df_countries['artist'] = [get_artist_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
 
      # Save the updated dataframe to a temporary pickle file
     temp_pickle_file_path = os.path.splitext(pickle_file_path)[0] + '_temp.pkl'
@@ -108,4 +107,8 @@ def update_new_releases(pickle_file_path):
     print("New releases updated successfully!")
 
 pickle_file_path= r"C:\Users\sofia\OneDrive\Documentos\GitHub\bigdataproject\app\data\new_releases.pkl"
-schedule.every(3).days.at("00:00").do(update_new_releases(pickle_file_path))
+schedule.every(3).days.at("00:00").do(update_new_releases, pickle_file_path)
+
+while True: # This starts an infinite loop.
+    schedule.run_pending() # This line checks if there are any scheduled tasks that are due to run and executes them. If there are no pending tasks, it does nothing.
+    time.sleep(1) #After checking for pending tasks, the program pauses for 1 second using the time.sleep() function. This ensures that the loop doesn't consume excessive resources and provides a delay between iterations.
