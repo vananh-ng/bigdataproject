@@ -147,6 +147,9 @@ with st.container():
             genre_names, index=genre_names.index("Pop"))
     with col1:
         st.markdown("***Choose features to customize:***")
+        start_year, end_year = st.slider(
+            'Select the year range',
+            1990, 2023, (2015, 2023)
         acousticness = st.slider(
             'Acousticness',
             0.0, 1.0, 0.5)
