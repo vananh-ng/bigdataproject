@@ -118,6 +118,9 @@ def main():
     # Explode 'genres' list into separate rows
     genres_popularity_df = df.explode('genres')
 
+    # Define unique_genres here
+    unique_genres = pd.unique(genres_popularity_df['genres'])
+
     # Create a color mapping
     num_genres = len(unique_genres)
     color_map = plt.get_cmap('tab20', num_genres)
@@ -129,7 +132,6 @@ def main():
 
     # Map genre color to 'genre_index' in DataFrame
     genres_popularity_df['color'] = genres_popularity_df['genres'].map(genre_to_color)
-
 
     # Create two columns
     col2, col3 = st.columns(2)
