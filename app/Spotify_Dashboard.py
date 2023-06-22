@@ -71,7 +71,8 @@ def search_for_artist(token, artist_name):
 
 
 def main():
-
+    st.sidebar.image("app\images\logo1.jpg", width=200)
+    st.sidebar.title("Pages")
     st.title('Spotify Dashboard')
 
     
