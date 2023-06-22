@@ -224,5 +224,4 @@ def main():
         else:
             st.write("No songs left to recommend")
         
-if __name__ == "__main__":
-    main()
+
