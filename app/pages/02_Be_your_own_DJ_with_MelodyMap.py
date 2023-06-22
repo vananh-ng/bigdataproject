@@ -42,7 +42,7 @@ with col2:
     st.image('app/images/logo2.png', width=100)
 
 st.markdown("##")
-st.write("💚 Create your own playlist based on your mood!")
+st.subheader("💚 Create your own playlist based on your mood!")
 # GPT-based recommendation engine
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = openai.ChatCompletion.create(
@@ -137,7 +137,7 @@ else:
 
 # Song Recommendation
 st.markdown("##")
-st.write("💚 Create your own playlist by choosing your favourite genre and features!")
+st.subheader("💚 Create your own playlist by choosing your favourite genre and features!")
 with st.container():
     col1, col2,col3,col4 = st.columns((2,0.5,0.5,0.5))
     with col3:
