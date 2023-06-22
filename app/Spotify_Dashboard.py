@@ -75,7 +75,7 @@ def main():
     with col1:
         st.title('Spotify Dashboard')
     with col2:
-        st.image('app/images/logo2.png')
+        st.image('app/images/logo2.png', width=100)
 
     
     st.header("Popular Artists")
