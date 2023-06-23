@@ -1,13 +1,27 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import streamlit as st
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import os
 from sklearn.neighbors import NearestNeighbors
 import plotly.express as px
 import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
+import openai
+
+# API Management
+load_dotenv(find_dotenv(".env"))
+
+# Set the OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Spotify API Keys
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+
+client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
 # COLOURS
 spotifyGreen = '#1dda63'
@@ -15,18 +29,51 @@ bg_color_cas = "#9bf0e1"
 grey = "#979797"
 lightgrey = "#bdbdbd"
 
-load_dotenv()
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
 
-client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
-
+# Set page config
 st.set_page_config(page_title="Spotify Big Data Project", 
-                   #page_icon=":musical_note:", 
-                   layout="wide")
+                #page_icon=":musical_note:", 
+                layout="wide")
+title = "Be your own DJ with MelodyMap!"
+col1, col2 = st.columns([7, 1]) 
+with col1:
+    st.title(title)
+with col2:
+    st.image('app/images/logo3.png', width=100)
 
+st.markdown("##")
+st.subheader("💚 Create your own playlist based on your mood!")
+# GPT-based recommendation engine
+def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=temperature
+    )
+    content = response['choices'][0]['message']['content']
+    return content
+
+def run_model(system_message, user_message):
+    messages = [
+        {'role': 'system',
+            'content': system_message},
+        {'role': 'user', 
+            'content': user_message}
+    ]
+    response = get_completion(messages)
+    return response
+system_message = "As a Spotify playlist recommender, \
+    your task is to provide song recommendations based on users' description of their current mood.\
+    You should aim to suggest a maximum of 10 songs that align with their request.\
+    Your tone is fun, compassion and friendly. Your goal is to make the user feel understood and happy.\
+    Your response should end with a fun joke about music."
+user_message = st.text_input("How's your mood today?")
+if st.button("Send"):
+    response = run_model(system_message, user_message)
+    st.write(response)
+    
 #@st.cache(allow_output_mutation=True)
+# Song recommendations based on genre and audio features
 @st.cache_data()
 def load_data():
     df = pd.read_csv('app/data/SpotGenTrack/filtered_track_df.csv')
@@ -40,9 +87,9 @@ audio_feats = ["acousticness", "danceability", "energy", "instrumentalness", "li
 exploded_track_df = load_data()
 
 # knn model
-def n_neighbors_uri_audio(genre, test_feat):
+def n_neighbors_uri_audio(genre, start_year, end_year, test_feat):
     genre = genre.lower()
-    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre)]
+    genre_data = exploded_track_df[(exploded_track_df["genres"]==genre) & (exploded_track_df["release_year"]>=start_year) & (exploded_track_df["release_year"]<=end_year)]
     genre_data = genre_data.sort_values(by='popularity', ascending=False)[:500]
     neigh = NearestNeighbors()
     neigh.fit(genre_data[audio_feats].to_numpy())
@@ -50,7 +97,6 @@ def n_neighbors_uri_audio(genre, test_feat):
     uris = genre_data.iloc[n_neighbors]["uri"].tolist()
     audios = genre_data.iloc[n_neighbors][audio_feats].to_numpy()
     return uris, audios
-
 
 ### Search for a song ###
 def search_song(song_name):
@@ -76,7 +122,7 @@ def search_song(song_name):
     return song_info
 
 # Use the sidebar method for the input and button
-song_name = st.sidebar.text_input("Enter a Song Name:", value='Viva La Vida')
+song_name = st.sidebar.text_input("Enter a Song Name:", value='Nellie')
 
 song_info = search_song(song_name)
 
@@ -85,9 +131,7 @@ if song_info == "Song not found.":
 else:
     st.sidebar.write("Song Name:", song_info['name'])
     st.sidebar.write("Artist:", song_info['artist'])
-    st.sidebar.write("Album:", song_info['album'])
     st.sidebar.write("Release Date:", song_info['release_date'])
-    st.sidebar.write("Popularity (0-100):", song_info['popularity'])
 
     # Create the Spotify embed in the sidebar
     st.sidebar.markdown(
@@ -96,10 +140,8 @@ else:
     )
 
 # Song Recommendation
-title = "Be your own DJ with MelodyMap!"
-st.title(title)
-st.write("Create your own playlist by choosing your favourite genre and features!")
 st.markdown("##")
+st.subheader("💚 Create your own playlist by choosing your favourite genre and features!")
 with st.container():
     col1, col2,col3,col4 = st.columns((2,0.5,0.5,0.5))
     with col3:
@@ -109,6 +151,9 @@ with st.container():
             genre_names, index=genre_names.index("Pop"))
     with col1:
         st.markdown("***Choose features to customize:***")
+        start_year, end_year = st.slider(
+            'Select the year range',
+            1990, 2023, (2015, 2023))
         acousticness = st.slider(
             'Acousticness',
             0.0, 1.0, 0.5)
@@ -136,15 +181,15 @@ with st.container():
 
 tracks_per_page = 6
 test_feat = [acousticness, danceability, energy, instrumentalness, liveness, loudness, speechiness, valence, tempo]
-uris, audios = n_neighbors_uri_audio(genre, test_feat)
+uris, audios = n_neighbors_uri_audio(genre, start_year, end_year, test_feat)
 tracks = []
 for uri in uris:
     track = """<iframe src="https://open.spotify.com/embed/track/{}" width="260" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>""".format(uri)
     tracks.append(track)
 
 if 'previous_inputs' not in st.session_state:
-    st.session_state['previous_inputs'] = [genre] + test_feat
-current_inputs = [genre] + test_feat
+    st.session_state['previous_inputs'] = [genre, start_year, end_year] + test_feat
+current_inputs = [genre, start_year, end_year] + test_feat
 if current_inputs != st.session_state['previous_inputs']:
     if 'start_track_i' in st.session_state:
         st.session_state['start_track_i'] = 0
@@ -190,5 +235,3 @@ with st.container():
                         st.plotly_chart(fig)
     else:
         st.write("No songs left to recommend")
-        
-

@@ -7,3 +7,5 @@ plotly
 streamlit
 spotipy
 openpyxl
+matplotlib
+seaborn
