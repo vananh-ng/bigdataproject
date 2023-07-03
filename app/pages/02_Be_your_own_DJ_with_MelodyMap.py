@@ -86,14 +86,6 @@ if st.button("Send") or (st.session_state['last_input'] != user_message):
 if st.session_state['response'] is not None:
     st.write(st.session_state['response'])
 
-#if st.button("Send"):
-#    response = run_model(system_message, user_message)
-    # Initialization
-    #if 'key' not in st.session_state:
-    #    st.session_state['key'] = response
-    #st.write(st.session_state.key)
-#    st.write(response)
-#@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
 def load_data():
