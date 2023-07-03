@@ -9,7 +9,6 @@ import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import openai
-from streamlit_agsession import SessionState 
 
 
 # API Management
@@ -47,7 +46,7 @@ st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
 
 # GPT-based recommendation engine
-@st.cache(suppress_st_warning=True, show_spinner=False)
+#@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = openai.ChatCompletion.create(
         model=model,
@@ -74,15 +73,9 @@ system_message = "As a Spotify playlist recommender, \
     Your response should end with a fun joke about music."
 
 user_message = st.text_input("How's your mood today?")
-# Initialize session state
-state = SessionState.get(response=None)
-
-if st.button("Send") or state.response is not None:
-    # Only make the expensive call if the response is not yet cached
-    if state.response is None:
-        state.response = run_model(system_message, user_message)
-    st.write(state.response)
- 
+if st.button("Send"):
+    response = run_model(system_message, user_message)
+    st.write(response)    
 #@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
