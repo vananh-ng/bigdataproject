@@ -77,9 +77,10 @@ user_message = st.text_input("How's your mood today?")
 if st.button("Send"):
     response = run_model(system_message, user_message)
     # Initialization
-    if 'key' not in st.session_state:
-        st.session_state['key'] = response
-    st.write(st.session_state.key)
+    #if 'key' not in st.session_state:
+    #    st.session_state['key'] = response
+    #st.write(st.session_state.key)
+    st.write(response)
 #@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
