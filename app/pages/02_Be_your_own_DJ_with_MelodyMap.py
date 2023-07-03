@@ -43,7 +43,9 @@ with col2:
 
 st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
+
 # GPT-based recommendation engine
+@st.cache(suppress_st_warning=True, show_spinner=True)
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = openai.ChatCompletion.create(
         model=model,
@@ -62,16 +64,17 @@ def run_model(system_message, user_message):
     ]
     response = get_completion(messages)
     return response
+
 system_message = "As a Spotify playlist recommender, \
     your task is to provide song recommendations based on users' description of their current mood.\
     You should aim to suggest a maximum of 10 songs that align with their request.\
     Your tone is fun, compassion and friendly. Your goal is to make the user feel understood and happy.\
     Your response should end with a fun joke about music."
+
 user_message = st.text_input("How's your mood today?")
 if st.button("Send"):
     response = run_model(system_message, user_message)
-    st.write(response)
-    
+    st.write(response)    
 #@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
