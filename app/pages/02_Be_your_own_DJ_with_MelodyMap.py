@@ -9,6 +9,8 @@ import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import openai
+from streamlit_agsession import SessionState 
+
 
 # API Management
 load_dotenv(find_dotenv(".env"))
@@ -72,9 +74,15 @@ system_message = "As a Spotify playlist recommender, \
     Your response should end with a fun joke about music."
 
 user_message = st.text_input("How's your mood today?")
-if st.button("Send"):
-    response = run_model(system_message, user_message)
-    st.write(response)    
+# Initialize session state
+state = SessionState.get(response=None)
+
+if st.button("Send") or state.response is not None:
+    # Only make the expensive call if the response is not yet cached
+    if state.response is None:
+        state.response = run_model(system_message, user_message)
+    st.write(state.response)
+ 
 #@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
