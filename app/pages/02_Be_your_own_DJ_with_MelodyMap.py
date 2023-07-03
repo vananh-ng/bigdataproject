@@ -45,7 +45,7 @@ st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
 
 # GPT-based recommendation engine
-@st.cache(suppress_st_warning=True, show_spinner=True)
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = openai.ChatCompletion.create(
         model=model,
