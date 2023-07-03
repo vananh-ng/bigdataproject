@@ -73,9 +73,12 @@ system_message = "As a Spotify playlist recommender, \
     Your response should end with a fun joke about music."
 
 user_message = st.text_input("How's your mood today?")
+
 if st.button("Send"):
     response = run_model(system_message, user_message)
-    st.write(response)    
+    # Initialization
+    if 'key' not in st.session_state:
+        st.session_state['key'] = response
 #@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
