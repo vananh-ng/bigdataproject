@@ -79,6 +79,7 @@ if st.button("Send"):
     # Initialization
     if 'key' not in st.session_state:
         st.session_state['key'] = response
+    st.write(st.session_state.key)
 #@st.cache(allow_output_mutation=True)
 # Song recommendations based on genre and audio features
 @st.cache_data()
