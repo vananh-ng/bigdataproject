@@ -135,7 +135,7 @@ def search_song(song_name):
     return song_info
 
 # Use the sidebar method for the input and button
-song_name = st.sidebar.text_input("Enter a Song Name:", value='Nellie')
+song_name = st.sidebar.text_input("Enter a Song Name:", value='Viva La Vida')
 
 song_info = search_song(song_name)
 
