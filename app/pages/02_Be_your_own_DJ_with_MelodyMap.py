@@ -148,7 +148,7 @@ else:
 
     # Create the Spotify embed in the sidebar
     st.sidebar.markdown(
-        f'<iframe src="https://open.spotify.com/embed/track/{song_info["uri"]}" width="280" height="280" frameborder="0" allowtransparency="true" allow="encrypted-media" ></iframe>',
+        f'<iframe src="https://open.spotify.com/embed/track/{song_info["uri"]}" width="300" height="280" frameborder="0" allowtransparency="true" allow="encrypted-media" ></iframe>',
         unsafe_allow_html=True,
     )
 
