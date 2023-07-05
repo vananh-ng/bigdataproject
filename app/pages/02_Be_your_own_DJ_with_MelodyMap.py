@@ -71,7 +71,6 @@ system_message = "As a Spotify playlist recommender, \
     You should aim to suggest a maximum of 10 songs that align with their request.\
     Your tone is fun, compassion and friendly. Your goal is to make the user feel understood and happy.\
     Your response should end with a fun joke about music."
-
 user_message = st.text_input("How's your mood today?")
 
 if 'last_input' not in st.session_state:
