@@ -69,7 +69,7 @@ fig = px.scatter_geo(df_countries, lat='cap_lat', lon= 'cap_lon',
 # Update the layout with the desired colors
 
 fig.update_layout(
-    title= 'Hover over the map to see the new albums worldwide',
+    title= 'Hover over the map to see the most popular new albums worldwide',
     geo=dict(
         bgcolor='#262730',  # Set the background color to black
         showland=True,
@@ -88,7 +88,7 @@ fig.update_layout(
 )
 col1, col2 = st.columns([7, 1]) 
 with col1:
-    st.title('New Releases World Map')
+    st.title('Most Popular New Releases World Map')
 with col2:
     st.image('app/images/logo3.png', width=100)
 st.plotly_chart(fig, use_container_width=True)
@@ -135,7 +135,7 @@ def get_new_releases_pic(country):
 
 # Use the sidebar method for the input and button
 country= st.sidebar.selectbox(
-    'Select a country to see the latest album and its tracks', (df_countries['country']))
+    'Select a country to see the latest most popular album and its tracks', (df_countries['country']))
 selected_tracks= tracks_from_album(country)
 selected_album= df_countries.loc[df_countries['country']== country,'new_releases'].values[0]
 selected_artist= df_countries.loc[df_countries['country']== country,'artist'].values[0]
