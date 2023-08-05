@@ -1,4 +1,0 @@
-note for TK
-
-docker build -t bigdataproject .
-docker run -p 8501:8501 -v "C:\Users\timot\Documents\Studium\Master\Semester 2\Big Data\bigdataproject/app:/app" bigdataproject
