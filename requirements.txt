@@ -9,4 +9,3 @@ spotipy
 openpyxl
 matplotlib
 seaborn
-streamlit_agsession
