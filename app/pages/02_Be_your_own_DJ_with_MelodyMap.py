@@ -24,13 +24,6 @@ client_secret = os.getenv("CLIENT_SECRET")
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-# COLOURS
-spotifyGreen = '#1dda63'
-bg_color_cas = "#9bf0e1"
-grey = "#979797"
-lightgrey = "#bdbdbd"
-
-
 # Set page config
 st.set_page_config(page_title="Spotify Big Data Project", 
                 #page_icon=":musical_note:", 
