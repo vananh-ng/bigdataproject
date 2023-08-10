@@ -104,6 +104,7 @@ def get_new_releases_id(country):
     url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
+    # Get the album ID
     json_result = json.loads(result.content)['albums']['items'][0]['id']
     return json_result
 
@@ -115,6 +116,7 @@ def tracks_from_album(country):
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
+    # List the tracks
     tracks_data= []
     for item in json_result['items']:
         name=item['name']
@@ -131,6 +133,7 @@ def get_new_releases_pic(country):
     url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
+    # Get the image url
     json_result = json.loads(result.content)['albums']['items'][0]['images'][1]['url']
     return json_result
 
