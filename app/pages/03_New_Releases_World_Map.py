@@ -24,8 +24,7 @@ print(type(client_secret))
 # We first request a token to the Spotify Accounts Service, which will be used later on to access the Spotify Web API
 # To get our access token, we need to pass our client ID, client Secret and grant_type
 
-# Get Spotify token 
-#@st.cache_data()   
+# Get Spotify token   
 def get_token():
     auth_string = client_id + ':' + client_secret
     auth_bytes = auth_string.encode("utf-8")
@@ -48,11 +47,8 @@ def get_token():
 token = get_token()
 
 # Function to construct the header to send a request
-#@st.cache_data()
 def get_auth_header(token):
     return{"Authorization": "Bearer " + token}
-
-#query= {what I want to get}&type= artist, track, playlist, album, artist, playlist, track, show, episode, audiobook.&limit=1 (first artist that pops up, most popular artist)
 
 # Read country data
 df_countries = pd.read_pickle('app/data/new_releases.pkl')
@@ -100,7 +96,7 @@ st.plotly_chart(fig, use_container_width=True)
 # Display the tracks of the album
 
 # Get the new release ID, so that later we can search for the tracks
-#@st.cache_data()
+@st.cache_data()
 def get_new_releases_id(country):
     # Find the country code for the given country name
     row = df_countries[df_countries['country'] == country]
@@ -112,7 +108,7 @@ def get_new_releases_id(country):
     return json_result
 
 # With the ID, get the tracks of that album
-#@st.cache_data()
+@st.cache_data()
 def tracks_from_album(country):
     album_id= get_new_releases_id(country)
     url= f"https://api.spotify.com/v1/albums/{album_id}/tracks?limit=15"
@@ -127,7 +123,7 @@ def tracks_from_album(country):
     return tracks_df
 
 # Get album image
-#@st.cache_data()
+@st.cache_data()
 def get_new_releases_pic(country):
     # Find the country code for the given country name
     row = df_countries[df_countries['country'] == country]
