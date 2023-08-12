@@ -28,7 +28,7 @@ sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 st.set_page_config(page_title="Spotify Big Data Project", 
                 #page_icon=":musical_note:", 
                 layout="wide")
-title = "Be your own DJ with MelodyMap!"
+title = "Be your own DJ!"
 col1, col2 = st.columns([7, 1]) 
 with col1:
     st.title(title)
