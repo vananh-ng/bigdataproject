@@ -147,25 +147,12 @@ def main():
         st.plotly_chart(fig, use_container_width=True)
 
     with col4:
-       #st.header('Top Albums by Followers')
-       ## remove 'Spotify Singles' from df column 'album_name'
-       #df_tmp = df[df['name'] != 'Spotify Singles']
-       #top_albums = df_tmp.groupby('name')['followers'].sum().nlargest(10)
-       #fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
-       #st.plotly_chart(fig, use_container_width=True)  
         st.header('Top Albums by Followers')
         # remove 'Spotify Singles' from df column 'album_name'
         df_tmp = df[df['name'] != 'Spotify Singles']
-        # Group by album name and genre, then sum the followers
-        grouped = df_tmp.groupby(['name', 'genre'])['followers'].sum().reset_index()
-        # Sort by followers and select top 10
-        top_albums = grouped.sort_values(by='followers', ascending=False).head(10)
-        # Map genre to color
-        top_albums['color'] = top_albums['genre'].map(genre_to_color)
-        fig = px.bar(top_albums, x='name', y='followers', color='color',
-                    labels={'name':'Albums', 'followers':'Followers'}, title='Top Albums by Followers',
-                    color_discrete_sequence=top_albums['color'])
-        st.plotly_chart(fig, use_container_width=True)
+        top_albums = df_tmp.groupby('name')['followers'].sum().nlargest(10)
+        fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
+        st.plotly_chart(fig, use_container_width=True)  
 
     # Create two more columns for the next section
     col5, col6 = st.columns(2)
