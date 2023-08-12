@@ -72,6 +72,30 @@ def get_artist_new_releases(df,country):
     json_result = json.loads(result.content)['albums']['items'][0]['artists'][0]['name']
     return json_result
 
+# Get the album id to later find its tracks
+def get_new_releases_id(df, country):
+    # Find the country code for the given country name
+    row = df[df['country'] == country]
+    country_code = row.iloc[0]['country_code']
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    # Get the album ID
+    json_result = json.loads(result.content)['albums']['items'][0]['id']
+    return json_result
+
+# Get album cover image
+def get_new_releases_pic(df,country):
+    # Find the country code for the given country name
+    row = df[df['country'] == country]
+    country_code = row.iloc[0]['country_code']
+    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    # Get the image url
+    json_result = json.loads(result.content)['albums']['items'][0]['images'][1]['url']
+    return json_result
+
 # Create the initial dataset
 #df_countries= pd.read_excel(r"app\data\country-available-final.xlsx")
 #df_countries.iloc[115,4]='NA' #Modify for Namibia: it detects NaN instead of NA country code
@@ -81,6 +105,12 @@ def get_artist_new_releases(df,country):
 
 # Get the new release artist
 #df_countries['artist'] = [get_artist_new_releases(df_countries.loc[index, 'country']) for index in range(len(df_countries))]
+
+# Get the album ID for the list of tracks
+#df_countries['album_id'] = [get_new_releases_id(df_countries, df_countries.loc[index, 'country']) for index in range(len(df_countries))]
+
+# Get the cover image url
+#df_countries['image_url'] = [get_new_releases_pic(df_countries, df_countries.loc[index, 'country']) for index in range(len(df_countries))]
 
 # Function to update new releases in the dataframe
 def update_new_releases(pickle_file_path):
@@ -96,6 +126,12 @@ def update_new_releases(pickle_file_path):
 
     # Get the new release artist
     df_countries['artist'] = [get_artist_new_releases(df_countries, df_countries.loc[index, 'country']) for index in range(len(df_countries))]
+
+    # Get the album ID for the list of tracks
+    df_countries['album_id'] = [get_new_releases_id(df_countries, df_countries.loc[index, 'country']) for index in range(len(df_countries))]
+
+    # Get the cover image url
+    df_countries['image_url'] = [get_new_releases_pic(df_countries, df_countries.loc[index, 'country']) for index in range(len(df_countries))]
 
      # Save the updated dataframe to a temporary pickle file
     temp_pickle_file_path = os.path.splitext(pickle_file_path)[0] + '_temp.pkl'

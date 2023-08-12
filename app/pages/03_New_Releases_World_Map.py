@@ -95,23 +95,12 @@ st.plotly_chart(fig, use_container_width=True)
 
 # Display the tracks of the album
 
-# Get the new release ID, so that later we can search for the tracks
-@st.cache_data()
-def get_new_releases_id(country):
-    # Find the country code for the given country name
-    row = df_countries[df_countries['country'] == country]
-    country_code = row.iloc[0]['country_code']
-    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    # Get the album ID
-    json_result = json.loads(result.content)['albums']['items'][0]['id']
-    return json_result
-
 # With the ID, get the tracks of that album
 @st.cache_data()
 def tracks_from_album(country):
-    album_id= get_new_releases_id(country)
+    # Find the country code for the given country name
+    row = df_countries[df_countries['country'] == country]
+    album_id = row.iloc[0]['album_id']
     url= f"https://api.spotify.com/v1/albums/{album_id}/tracks?limit=15"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
@@ -124,18 +113,6 @@ def tracks_from_album(country):
     tracks_df= pd.DataFrame(tracks_data)
     return tracks_df
 
-# Get album image
-@st.cache_data()
-def get_new_releases_pic(country):
-    # Find the country code for the given country name
-    row = df_countries[df_countries['country'] == country]
-    country_code = row.iloc[0]['country_code']
-    url= f"https://api.spotify.com/v1/browse/new-releases?country={country_code}&limit=1"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    # Get the image url
-    json_result = json.loads(result.content)['albums']['items'][0]['images'][1]['url']
-    return json_result
 
 # Use the sidebar method for the input and button
 country= st.sidebar.selectbox(
@@ -143,7 +120,7 @@ country= st.sidebar.selectbox(
 selected_tracks= tracks_from_album(country)
 selected_album= df_countries.loc[df_countries['country']== country,'new_releases'].values[0]
 selected_artist= df_countries.loc[df_countries['country']== country,'artist'].values[0]
-image_url= get_new_releases_pic(country)
+image_url= df_countries.loc[df_countries['country']== country,'image_url'].values[0]
 
 st.sidebar.write(f"The latest Album in **{country}** is **{selected_album}** by **{selected_artist}**")
 st.sidebar.image(image_url)
