@@ -73,7 +73,7 @@ def search_for_artist(token, artist_name):
 def main():
     col1, col2 = st.columns([7, 1]) 
     with col1:
-        st.title('MelodyMap Dashboard')
+        st.title('MelodyMap')
     with col2:
         st.image('app/images/logo3.png', width=100)
     
