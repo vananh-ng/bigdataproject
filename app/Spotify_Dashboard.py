@@ -147,11 +147,11 @@ def main():
         st.plotly_chart(fig, use_container_width=True)
 
     with col4:
-        st.header('Top Albums by Followers')
+        st.header('Top Albums')
         # remove 'Spotify Singles' from df column 'album_name'
         df_tmp = df[df['name'] != 'Spotify Singles']
         top_albums = df_tmp.groupby('name')['followers'].sum().nlargest(10)
-        fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top Albums by Followers')
+        fig = px.bar(top_albums, x=top_albums.index, y=top_albums.values, labels={'x':'Albums', 'y':'Followers'}, title='Top 10 Albums by Followers')
         st.plotly_chart(fig, use_container_width=True)  
 
     # Create two more columns for the next section
