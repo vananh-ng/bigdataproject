@@ -71,10 +71,9 @@ def search_for_artist(token, artist_name):
 
 
 def main():
-    col1 = st.columns([7, 1]) 
+    col1, col2 = st.columns([7, 1])  # This will unpack the columns into col1 and col2
     with col1:
         st.image('app/images/melodymap.png', use_column_width=True)
-    
     st.header("Current Top Artists Worldwide")
     top_artists = df.groupby('artists_name')['followers'].sum().sort_values(ascending=False).head(10)
 
