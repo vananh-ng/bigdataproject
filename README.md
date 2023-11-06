@@ -12,4 +12,4 @@ Link to Melody Map: [https://spotify-melodymap.streamlit.app/](https://spotify-m
 * OpenAI GPT-3 API Access
 
 # System Architecture
-![Melody Map Project Architecture](/Users/I576810/Documents/GitHub/bigdataproject/02_image.png)
+![Melody Map Project Architecture](02_image.png)
