@@ -58,7 +58,9 @@ def get_completion(system_message, user_message):
 #user_message = st.text_input("🤖 How's your mood today?")
 
 # Streamlit UI Code
-system_message = "Recommend 10 songs based on user's mood. Your tone is friendly and understanding."
+system_message = "Recommend 10 songs based on user's mood. Your tone is friendly and understanding.\
+    Your response should be in the form of a list of song titles.\
+        Your response should start with the emoji '🤖'"
 
 # Creating two columns
 col1, col2 = st.columns(2)
@@ -67,13 +69,14 @@ col1, col2 = st.columns(2)
 with col1:
     if 'response' not in st.session_state:
         st.session_state['response'] = "Your response will appear here..."
-
+    send_button = st.button("Send")
+    
 # Text input in the left column
 with col2:
-    user_message = st.text_input("How's your mood today?", key="user_input")
+    user_message = st.text_input("User", key="user_input")
 
 # Button outside the columns, spanning the full width
-if st.button("Send"):
+if send_button:
     st.session_state['response'] = get_completion(system_message, user_message)
 
 # Updating the response in the right column
