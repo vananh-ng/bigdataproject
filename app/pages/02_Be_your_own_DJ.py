@@ -43,7 +43,7 @@ st.subheader("💚 Create your own playlist based on your mood!")
 #@st.cache(suppress_st_warning=True, show_spinner=False)
 
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
-    response = openai.ChatCompletion.create(model=model,
+    response = client.chat.completions.create(model=model,
                                             messages=messages,
                                             temperature=temperature)
     # Assuming the response object has a proper method/attribute to get the content
