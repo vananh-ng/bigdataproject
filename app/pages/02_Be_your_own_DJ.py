@@ -52,11 +52,11 @@ def get_completion(system_message, user_message):
     )
     return completion.choices[0].message.content
 
-# Streamlit UI Code
 system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly. Your goal is to make the user feel understood and happy. Your response should end with a fun joke about music."
 
 user_message = st.text_input("🤖 How's your mood today?")
 
+# Streamlit UI Code
 if 'last_input' not in st.session_state:
     st.session_state['last_input'] = None
 if 'response' not in st.session_state:
@@ -68,6 +68,8 @@ if st.button("Send") or (st.session_state['last_input'] != user_message):
 
 if st.session_state['response'] is not None:
     st.write(st.session_state['response'])
+
+
 
 # Song recommendations based on genre and audio features
 @st.cache_data()
