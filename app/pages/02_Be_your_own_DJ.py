@@ -50,7 +50,7 @@ def get_completion(user_message):
         {"role": "user", "content": user_message}
     ]
     )
-    return completion.choices[0].message
+    return completion.choices[0].message.content
 
 # Streamlit UI Code
 system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly. Your goal is to make the user feel understood and happy. Your response should end with a fun joke about music."
