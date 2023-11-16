@@ -69,11 +69,11 @@ col1, col2 = st.columns(2)
 with col1:
     if 'response' not in st.session_state:
         st.session_state['response'] = "Your response will appear here..."
-    send_button = st.button("Send")
     
 # Text input in the left column
 with col2:
     user_message = st.text_input("User", key="user_input")
+    send_button = st.button("Send")
 
 # Button outside the columns, spanning the full width
 if send_button:
