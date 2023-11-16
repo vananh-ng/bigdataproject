@@ -45,6 +45,7 @@ st.subheader("💚 Create your own playlist based on your mood!")
 def get_completion(system_message, user_message):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
+    temperature=0.7,
     messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_message}
@@ -52,7 +53,7 @@ def get_completion(system_message, user_message):
     )
     return completion.choices[0].message.content
 
-system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly. Your goal is to make the user feel understood and happy. Your response should end with a fun joke about music."
+system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly."
 
 user_message = st.text_input("🤖 How's your mood today?")
 
