@@ -46,7 +46,7 @@ def get_completion(system_message, user_message):
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-            {"role": "system", "content": system message},
+            {"role": "system", "content": system_message},
             {"role": "user", "content": user_message}
         ]
     )
