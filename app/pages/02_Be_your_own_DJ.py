@@ -9,6 +9,7 @@ import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 from openai import OpenAI
+import openai
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -43,7 +44,7 @@ st.subheader("💚 Create your own playlist based on your mood!")
 # GPT-based recommendation engine
 #@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
-    response = client.chat.completions.create(model=model,
+    response = openai.ChatCompletion.create(model=model,
                                               messages=messages,
                                               temperature=temperature)
     # Accessing the content of the response correctly
