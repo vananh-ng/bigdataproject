@@ -31,11 +31,11 @@ st.set_page_config(page_title="Spotify Big Data Project",
                 #page_icon=":musical_note:", 
                 layout="wide")
 title = "Be your own DJ!"
-col1, col2 = st.columns([6, 4]) 
+col1, col2 = st.columns([7, 1]) 
 with col1:
     st.title(title)
 with col2:
-    st.image('app/images/logo4.png', width=100)
+    st.image('app/images/logo4.png', use_column_width='auto')
 
 st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
