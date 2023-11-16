@@ -1,6 +1,6 @@
 python-dotenv
 pandas
-openai
+openai==0.28
 numpy
 scikit-learn
 plotly
