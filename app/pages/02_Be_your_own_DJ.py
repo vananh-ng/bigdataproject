@@ -8,14 +8,16 @@ import plotly.express as px
 import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 # API Management
 load_dotenv(find_dotenv(".env"))
 
 # Set the OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 # Spotify API Keys
 client_id = os.getenv("CLIENT_ID")
@@ -41,11 +43,9 @@ st.subheader("💚 Create your own playlist based on your mood!")
 # GPT-based recommendation engine
 #@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-        temperature=temperature
-    )
+    response = client.chat.completions.create(model=model,
+    messages=messages,
+    temperature=temperature)
     content = response['choices'][0]['message']['content']
     return content
 
