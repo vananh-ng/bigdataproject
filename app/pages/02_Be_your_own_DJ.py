@@ -48,7 +48,7 @@ def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
                                             temperature=temperature)
     # Assuming the response object has a proper method/attribute to get the content
     # Adjust this line as per the actual structure of the response object
-    content = response.choices[0]['message']['content'] if 'message' in response.choices[0] else "No content found"
+    content = response.choices[0]['message']['content']
     return content
 
 def run_model(system_message, user_message):
