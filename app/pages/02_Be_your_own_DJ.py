@@ -17,8 +17,6 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # API Management
 load_dotenv(find_dotenv(".env"))
 
-# Set the OpenAI API key
-
 
 # Spotify API Keys
 client_id = os.getenv("CLIENT_ID")
@@ -43,29 +41,27 @@ st.subheader("💚 Create your own playlist based on your mood!")
 
 # GPT-based recommendation engine
 #@st.cache(suppress_st_warning=True, show_spinner=False)
+
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = openai.ChatCompletion.create(model=model,
-                                              messages=messages,
-                                              temperature=temperature)
-    # Accessing the content of the response correctly
-    content = response.choices[0].message['content']
+                                            messages=messages,
+                                            temperature=temperature)
+    # Assuming the response object has a proper method/attribute to get the content
+    # Adjust this line as per the actual structure of the response object
+    content = response.choices[0]['message']['content'] if 'message' in response.choices[0] else "No content found"
     return content
 
 def run_model(system_message, user_message):
     messages = [
-        {'role': 'system',
-            'content': system_message},
-        {'role': 'user', 
-            'content': user_message}
+        {'role': 'system', 'content': system_message},
+        {'role': 'user', 'content': user_message}
     ]
     response = get_completion(messages)
     return response
 
-system_message = "As a Spotify playlist recommender, \
-    your task is to provide song recommendations based on users' description of their current mood.\
-    You should aim to suggest a maximum of 10 songs that align with their request.\
-    Your tone is fun, compassion and friendly. Your goal is to make the user feel understood and happy.\
-    Your response should end with a fun joke about music."
+# Streamlit UI Code
+system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly. Your goal is to make the user feel understood and happy. Your response should end with a fun joke about music."
+
 user_message = st.text_input("How's your mood today?")
 
 if 'last_input' not in st.session_state:
