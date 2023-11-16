@@ -63,21 +63,21 @@ system_message = "Recommend 10 songs based on user's mood. Your tone is friendly
 # Creating two columns
 col1, col2 = st.columns(2)
 
-# Text input in the left column
-with col1:
-    user_message = st.text_input("How's your mood today?", key="user_input")
-
 # Response display in the right column
-with col2:
+with col1:
     if 'response' not in st.session_state:
         st.session_state['response'] = "Your response will appear here..."
+
+# Text input in the left column
+with col2:
+    user_message = st.text_input("How's your mood today?", key="user_input")
 
 # Button outside the columns, spanning the full width
 if st.button("Send"):
     st.session_state['response'] = get_completion(system_message, user_message)
 
 # Updating the response in the right column
-with col2:
+with col1:
     st.write(st.session_state['response'])
 
 # Song recommendations based on genre and audio features
