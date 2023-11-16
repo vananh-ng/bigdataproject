@@ -88,7 +88,7 @@ col1, col2 = st.columns([7, 1])
 with col1:
     st.title('Most Popular New Releases World Map')
 with col2:
-    st.image('app/images/logo3.png', width=100)
+    st.image('app/images/logo4.png', use_column_width='auto')
 st.plotly_chart(fig, use_container_width=True)
 
 
