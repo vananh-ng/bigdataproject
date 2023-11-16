@@ -42,22 +42,15 @@ st.subheader("💚 Create your own playlist based on your mood!")
 # GPT-based recommendation engine
 #@st.cache(suppress_st_warning=True, show_spinner=False)
 
-def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
-    response = client.chat.completions.create(model=model,
-                                            messages=messages,
-                                            temperature=temperature)
-    # Assuming the response object has a proper method/attribute to get the content
-    # Adjust this line as per the actual structure of the response object
-    content = response.choices[0]['message']['content']
-    return content
-
-def run_model(system_message, user_message):
-    messages = [
-        {'role': 'system', 'content': system_message},
-        {'role': 'user', 'content': user_message}
+def get_completion(user_message):
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "Recommend 10 songs based on user's mood"},
+        {"role": "user", "content": user_message}
     ]
-    response = get_completion(messages)
-    return response
+    )
+    return completion.choices[0].message
 
 # Streamlit UI Code
 system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly. Your goal is to make the user feel understood and happy. Your response should end with a fun joke about music."
@@ -71,7 +64,7 @@ if 'response' not in st.session_state:
 
 if st.button("Send") or (st.session_state['last_input'] != user_message):
     st.session_state['last_input'] = user_message
-    st.session_state['response'] = run_model(system_message, user_message)
+    st.session_state['response'] = get_completion(user_message)
 
 if st.session_state['response'] is not None:
     st.write(st.session_state['response'])
