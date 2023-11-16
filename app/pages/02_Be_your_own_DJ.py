@@ -53,21 +53,31 @@ def get_completion(system_message, user_message):
     )
     return completion.choices[0].message.content
 
-system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly."
+#system_message = "As a Spotify playlist recommender, your task is to provide song recommendations based on users' description of their current mood. Your tone is fun, compassionate, and friendly."
 
-user_message = st.text_input("🤖 How's your mood today?")
+#user_message = st.text_input("🤖 How's your mood today?")
 
 # Streamlit UI Code
-if 'last_input' not in st.session_state:
-    st.session_state['last_input'] = None
-if 'response' not in st.session_state:
-    st.session_state['response'] = None
+system_message = "Recommend 10 songs based on user's mood. Your tone is friendly and understanding."
 
-if st.button("Send") or (st.session_state['last_input'] != user_message):
-    st.session_state['last_input'] = user_message
+# Creating two columns
+col1, col2 = st.columns(2)
+
+# Text input in the left column
+with col1:
+    user_message = st.text_input("How's your mood today?", key="user_input")
+
+# Response display in the right column
+with col2:
+    if 'response' not in st.session_state:
+        st.session_state['response'] = "Your response will appear here..."
+
+# Button outside the columns, spanning the full width
+if st.button("Send"):
     st.session_state['response'] = get_completion(system_message, user_message)
 
-if st.session_state['response'] is not None:
+# Updating the response in the right column
+with col2:
     st.write(st.session_state['response'])
 
 # Song recommendations based on genre and audio features
