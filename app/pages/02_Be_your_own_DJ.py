@@ -35,7 +35,7 @@ col1, col2 = st.columns([7, 1])
 with col1:
     st.title(title)
 with col2:
-    st.image('app/images/logo3.png', width=100)
+    st.image('app/images/melodymap.png', width=100)
 
 st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
