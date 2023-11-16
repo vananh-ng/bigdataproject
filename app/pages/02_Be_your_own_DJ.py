@@ -35,7 +35,7 @@ col1, col2 = st.columns([7, 1])
 with col1:
     st.title(title)
 with col2:
-    st.image('app/images/melodymap.png', width=100)
+    st.image('app/images/logo4.png', width=100)
 
 st.markdown("##")
 st.subheader("💚 Create your own playlist based on your mood!")
@@ -44,9 +44,10 @@ st.subheader("💚 Create your own playlist based on your mood!")
 #@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_completion(messages, model="gpt-3.5-turbo", temperature=0.7):
     response = client.chat.completions.create(model=model,
-    messages=messages,
-    temperature=temperature)
-    content = response['choices'][0]['message']['content']
+                                              messages=messages,
+                                              temperature=temperature)
+    # Accessing the content of the response correctly
+    content = response.choices[0].message['content']
     return content
 
 def run_model(system_message, user_message):
